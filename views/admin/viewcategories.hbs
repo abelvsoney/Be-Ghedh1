@@ -88,6 +88,7 @@ body {
         <table class="table mt-5" id="myTable">
             <thead>
                 <tr>
+                    <th scope="col">No.</th>
                     <th scope="col">Brand</th>
                     <th scope="col">Category Name</th>
                     <th scope="col">Delete</th>
@@ -96,6 +97,7 @@ body {
             <tbody>
                 {{#each categories}}
                 <tr>
+                    <td>{{inc @index}}</td>
                     <td>{{this.brand}}</td>
                     <td>{{this.categoryname}}</td>
                     <td><a href="/admin/deletecategory?categoryId={{this.categoryId}}" class="btn btn-danger" onclick="return confirm('Do you want to delete category : {{this.categoryname}} of {{this.brand}}  ?')">Delete</a></td>

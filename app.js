@@ -16,6 +16,11 @@ var db=require('./database/connection');
 var app = express();
 app.use(fileupload());
 
+Handlebars.registerHelper("inc", function(value, options)
+{
+    return parseInt(value) + 1;
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
