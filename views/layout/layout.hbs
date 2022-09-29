@@ -60,7 +60,10 @@
     {{{body}}}
 
     {{#if admin}}
-    {{else}}
+	{{> adminloginheader}}
+    {{else if adminloginheader}}
+	{{> adminloginheader}}
+	{{else if user}}
     {{> userfooter}}
     {{/if}}
 
