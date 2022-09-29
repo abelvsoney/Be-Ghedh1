@@ -1,0 +1,147 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<form class="form-horizontal p-5" action="/admin/editproduct?id={{response._id}}" method="post">
+<fieldset>
+
+<center class="p-5"><h3 style="text-decoration: underline;">Edit Product</h3></center>
+
+<center>
+
+ <!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="brand_name">Brand</label>  
+  <div class="col-md-4">
+  <input id="brand_name" name="brand_name" value="{{response.brand_name}}" placeholder="{{brand_name}}" class="form-control input-md" required="" type="text" readonly>
+
+  </div>
+</div>
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="product_name">PRODUCT NAME</label>  
+  <div class="col-md-4">
+  <input id="product_name" name="product_name" value="{{response.product_name}}" placeholder="Product Name" class="form-control input-md" required="" type="text">
+  </div>
+</div>
+
+
+
+
+
+<div class="form-group">
+    <label for="category">Choose a category:</label>
+    <select id="category" name="category">
+        {{#each category}}
+      <option value="{{this.categoryname}}">{{this.categoryname}}</option>
+        {{/each}}
+    </select>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="brand_name">Size</label>  
+  <div class="col-md-4">
+  <input id="size" name="size" value="{{response.size}}" placeholder="{{response.size}}" class="form-control input-md" required="" type="text">
+
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="brand_name">Color</label>  
+  <div class="col-md-4">
+  <input id="color" name="color" value="{{response.color}}" placeholder="{{response.color}}" class="form-control input-md" required="" type="text">
+
+  </div>
+</div>
+
+
+
+
+
+<!-- Textarea -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="product_description">PRODUCT DESCRIPTION</label>
+  <div class="col-md-4">                     
+    <textarea class="form-control" id="product_description" name="product_description" required>{{response.product_description}}</textarea>
+  </div>
+</div>
+   
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="available_quantity">QUANTITY</label>  
+  <div class="col-md-4">
+  <input id="quantity" name="quantity" value="{{response.quantity}}" placeholder="AVAILABLE QUANTITY" class="form-control input-md" required="" type="number">
+    
+  </div>
+</div>  
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="available_quantity">Price</label>  
+  <div class="col-md-4">
+  <input id="price" name="price" value="{{response.price}}" placeholder="Price" class="form-control input-md" required="" type="number">
+    
+  </div>
+</div>  
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
+  <div class="col-md-4">
+  <input id="img_url1" name="img_url1" value="{{response.img_url1}}" placeholder="Image Url 1" class="form-control input-md" required="" type="text">
+    
+  </div>
+</div> 
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
+  <div class="col-md-4">
+  <input id="img_url2" name="img_url2" value="{{response.img_url2}}" placeholder="Image Url 2" class="form-control input-md" required="" type="text">
+    
+  </div>
+</div> 
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
+  <div class="col-md-4">
+  <input id="img_url3" name="img_url3" value="{{response.img_url3}}" placeholder="Image Url 3" class="form-control input-md" required="" type="text">
+    
+  </div>
+</div> 
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
+  <div class="col-md-4">
+  <input id="img_url4" name="img_url4" value="{{response.img_url4}}" placeholder="Image Url 4" class="form-control input-md" required="" type="text">
+    
+  </div>
+</div> 
+
+ <!-- File Button --> 
+{{!-- <div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">main_image</label>
+  <div class="col-md-4">
+    <input id="filebutton" name="filebutton" class="input-file" type="file">
+  </div>
+</div>
+<!-- File Button --> 
+<div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">auxiliary_images</label>
+  <div class="col-md-4">
+    <input id="filebutton" name="filebutton" class="input-file" type="file">
+  </div>
+</div> --}}
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+  </div>
+</center>
+
+</fieldset>
+</form>

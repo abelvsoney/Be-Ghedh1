@@ -1,0 +1,62 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<form class="form-horizontal p-5" action="/admin/editbanner?id={{response._id}}" method="post">
+<fieldset>
+
+<center class="p-5"><h3 style="text-decoration: underline;">Edit Banner</h3></center>
+
+<center>
+
+
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="banner_img">Banner Image</label>  
+  <div class="col-md-4">
+  <input id="banner_img" name="banner_img" value="{{response.banner_img}}" placeholder="Banner Image" class="form-control input-md" required="" type="url">
+  </div>
+</div>
+
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="banner_title">Banner Title</label>  
+  <div class="col-md-4">
+  <input id="banner_title" name="banner_title" value="{{response.banner_title}}" placeholder="Banner Title" class="form-control input-md" required="" type="text">
+
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="banner_phrase">Banner Phrase</label>  
+  <div class="col-md-4">
+  <input id="banner_phrase" name="banner_phrase" value="{{response.banner_phrase}}" placeholder="Banner Phrase" class="form-control input-md" required="" type="text">
+
+  </div>
+</div>
+   
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="banner_route">Banner Route</label>  
+  <div class="col-md-4">
+  <input id="banner_route" name="banner_route" value="{{response.banner_route}}" placeholder="Banner Route" class="form-control input-md" required="" type="text">
+    
+  </div>
+</div>  
+
+
+
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+  </div>
+</center>
+
+</fieldset>
+</form>

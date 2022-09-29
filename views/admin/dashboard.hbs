@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body onload="getChart()">
+
+
+
+
+  <div class="w3-container" style="background-image: linear-gradient(90deg,#8277FF, #6AA6FF);">
+    <h1>dashboard</h1>
+  </div>
+
+
+<div class="w3-container">
+  <div class="col-sm-6">
+      <div class="bg-light text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h6 class="mb-0">Sales</h6>
+
+        </div>
+        <canvas id="myChart1"></canvas>
+      </div>
+    </div>
+
+</div>
+   
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+</script>
+{{!-- <script>
+  let myChart = document.getElementById("chart2");
+  fetch('/admin/day', {
+            method: 'get',
+        }).then((val) => val.json())
+        console.log(val)
+            .then((data) => {
+                console.log(data);
+                let xaxis = []
+                let countss = []
+                for (const val of data) {
+                    let date = `${val.detail.day}/${val.detail.month}/${val.detail.year}`
+                    xaxis.push(date)
+                    countss.push(val.count)
+                }
+
+                const masspopChart = new Chart(myChart, {
+                    type: 'bar',
+                    data: {
+                        labels: [...xaxis],
+                        datasets: [{
+                            label: 'Number of orders',
+                            data: [...countss],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(245, 125, 75, 1.2)',
+                                'rgb(255, 99, 132)',
+                                'rgb(54, 162, 235)',
+                                'rgb(255, 205, 86)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                })
+            })
+</script> --}}
+{{!-- <canvas id="myChart1" width="400" height="300"></canvas> --}}
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    function getChart() {
+        console.log("hiii")
+        $.ajax({
+            url: '/admin/day',
+            method: 'get',
+            success: (data) => {
+                
+                var ctx = document.getElementById('myChart1').getContext('2d');
+                let xaxis = []
+                let countss = []
+                for (const val of data) {
+                    let date = `${val.detail.day}/${val.detail.month}/${val.detail.year}`
+                    xaxis.push(date)
+                    countss.push(val.count)
+                }
+                var myChart1 = new Chart(ctx, {
+                    type: 'pie',
+                    
+                    data: {
+                        labels: [...xaxis],
+                        datasets: [{
+                            label: 'Number of Products',
+                            data: [...countss],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        })
+    }
+    
+    
+</script>
+<script src="../../public/javascripts/chartmin.js"></script>
+     
+</body>
+</html>

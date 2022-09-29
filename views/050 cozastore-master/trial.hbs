@@ -1,0 +1,164 @@
+<style>
+    /* Text Demo */
+.large p {
+  width: 600px;
+  font-size: 16px;
+}
+
+.small p {
+  width: 300px;
+  font-size: 8px;
+}
+
+/* Image Demo */
+.large img {
+  width: 500px;
+  height: 333px;
+}
+
+.small img {
+  width: 225px;
+  height: 150px;
+}
+
+/* Dark overlay - set overlay option
+ to true to see this style */
+.az-overlay {
+  background-color: #000;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  z-index: 10;
+}
+/* make zoom window round 
+  default zoom window size is 110px,
+  set the border-radius to half */
+.az-zoom {
+  border-radius: 5px; /* 55px; */
+}
+
+/* fade out small content when hovering
+.az-hovered > * {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+*/
+
+.large {
+  background: #fff;
+}
+
+.zoom {
+  display: block;
+  margin: 0 auto;
+  background: red;
+}
+
+body {
+  margin: 100px;
+}
+
+</style>
+
+<p><strong>Text Demo</strong></p>
+
+<div id="zoom1">
+
+  <div class="small">
+    <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
+      Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus
+      lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor,
+      facilisis luctus, metus.</p>
+  </div>
+
+  <!-- the clone option will automatically make a div.large if it doesn't exist -->
+
+</div>
+
+<br>
+
+<p><strong>Image Demo</strong></p>
+
+<div id="zoom2">
+
+  <div class="small">
+    <img src="https://css-tricks.github.io/AnythingZoomer/demo/rushmore_small.jpg" alt="small rushmore">
+  </div>
+
+  <div class="large">
+    <img src="https://css-tricks.github.io/AnythingZoomer/demo/rushmore.jpg" alt="big rushmore">
+  </div>
+
+</div>
+
+<script>
+    /* 
+ Demo for jQuery AnythingZoomer Plugin
+ https://github.com/CSS-Tricks/AnythingZoomer
+ */
+$(function() {
+  $("#zoom1").anythingZoomer({
+
+    // ***************** content areas *****************
+    // class of small content area; the element with this class
+    // name must be inside of the wrapper
+    smallArea: 'small',
+
+    // class of large content area; this class must exist inside
+    // of the wrapper. When the clone option is true, it will add
+    // this automatically
+    largeArea: 'large',
+
+    // Make a clone of the small content area, use css to modify
+    // the style; default is false;
+    // set to true here to clone the small content
+    clone: true,
+
+    // ***************** appearance *****************
+    // Set to true to add the overlay style while hovering the
+    // small content, false to disable
+    overlay: false,
+
+    // fade animation speed (in milliseconds)
+    speed: 100,
+
+    // How far outside the wrapped edges the mouse can go;
+    // previously called "expansionSize"
+    edge: 30,
+
+    // adjust the horizontal position of the large content inside
+    // the zoom window as desired
+    offsetX: 0,
+
+    // adjust the vertical position of the large content inside
+    // the zoom window as desired
+    offsetY: 0,
+
+    // ***************** functionality *****************
+    // event that allows toggling between small and large
+    // elements; default is double click ('dblclick')
+    switchEvent: 'dblclick',
+
+    // time to delay before revealing the zoom window.
+    delay: 0,
+
+    // ***************** edit mode *****************
+    // add x,y coordinates into zoom window to make it easier to
+    // find coordinates
+    edit: false,
+
+    // ***************** callbacks *****************
+    // AnythingZoomer done initializing
+    initialized: function(e, zoomer) {},
+
+    // zoom window visible
+    zoom: function(e, zoomer) {},
+
+    // zoom window hidden
+    unzoom: function(e, zoomer) {}
+
+  });
+
+  $("#zoom2").anythingZoomer();
+});
+
+</script>

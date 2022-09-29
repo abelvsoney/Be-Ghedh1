@@ -1,0 +1,131 @@
+
+
+<section>
+
+    <center class="p-5"><a href="#"><button class="btn btn-success" hidden></button></a></center>
+    
+    <div class="container">
+        <table class="table mt-5" id="myTable">
+            <thead>
+                <tr>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">Total Price</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">View Order</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each orders}}
+                <tr>
+                    <td>{{this._id}}</td>
+                    <td>{{this.totalAmount}}</td>
+                    {{#if this.cancelled}}
+                    <td>Cancelled</td>
+                    {{else if this.delivered}}
+                    <td>Delivered</td>
+                    {{else if this.shipped}}
+                    <td>
+                      <select name="status" id="status" onchange="location = this.value">
+                        <option value="Placed" selected disabled >Shipped</option>
+                        <option value="/admin/changeOrderStatus?id={{this._id}}&status=Delivered">Delivered</option>
+                        <option value="/admin/cancelorder?id={{this._id}}">Cancel</option>
+                      </select>
+                    </td>
+                    {{else if this.pending}}
+                    <td>
+                      <select name="status" id="status" onchange="location = this.value;">
+                        <option value="Placed" selected disabled >Pending</option>
+                        <option value="/admin/cancelorder?id={{this._id}}">Cancel</option>
+                      </select>
+                    </td>
+                    {{else}}
+                    <td>
+                      <select name="status" id="status" onchange="location = this.value;">
+                        <option value="Placed" selected disabled >Placed</option>
+                        <option value="/admin/changeOrderStatus?id={{this._id}}&status=Shipped">Shipped</option>
+                        <option value="/admin/changeOrderStatus?id={{this._id}}&status=Delivered">Delivered</option>
+                        <option value="/admin/cancelorder?id={{this._id}}">Cancel</option>
+                      </select>
+                    </td>
+                    {{/if}}
+                    <td>{{this.paymentmethod}}</td>
+                    <td><a href="#" class="btn btn-success">View</a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+
+
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+

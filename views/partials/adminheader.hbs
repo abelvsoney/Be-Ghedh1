@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+<body>
+
+<div class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left" style="padding-top: 40px; width:200px; background-image: linear-gradient(180deg,#8277FF, #6AA6FF);" id="mySidebar">
+  <button class="w3-bar w3-large w3-hide-large btn mb-4" style="color: white;" onclick="w3_close()">Close &times;</button>
+  {{!-- <a href="#" class="w3-bar-item w3-button">Link 1</a> --}}
+  {{#if dashboard}}
+  <a href="/admin"><button class="w3-bar btn" style="height: 40px; color: white;">Dasboard</button></a>
+  {{else}}
+  <a href="/admin"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Dasboard</button></a>
+    {{/if}}
+    {{#if users}}
+  <a href="/admin/viewusers"><button class="w3-bar btn" style="height: 40px; color: white;">Customer</button></a>
+  {{else}}
+  <a href="/admin/viewusers"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Customer</button></a>
+  {{/if}}
+  {{#if products}}
+  <a href="/admin/viewproducts"><button class="w3-bar btn" style="height: 40px; color: white;">Product</button></a>
+  {{else}}
+  <a href="/admin/viewproducts"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Product</button></a>
+  {{/if}}
+  {{#if brands}}
+  <a href="/admin/viewbrands"><button class="w3-bar btn" style="height: 40px; color: white;">Brand</button></a>
+  {{else}}
+  <a href="/admin/viewbrands"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Brand</button></a>
+  {{/if}}
+  {{#if categories}}
+  <a href="/admin/viewcategories"><button class="w3-bar btn" style="height: 40px; color: white;">Categories</button></a>
+  {{else}}
+  <a href="/admin/viewcategories"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Categories</button></a>
+  {{/if}}
+  {{#if orders}}
+  <a href="/admin/vieworders"><button class="w3-bar btn" style="height: 40px; color: white;">Orders</button></a>
+  {{else}}
+  <a href="/admin/vieworders"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Orders</button></a>
+  {{/if}}
+  {{#if offers}}
+  <a href="#"><button class="w3-bar btn" style="height: 40px; color: white;">Offers</button></a>
+  {{else}}
+  <a href="#"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Offers</button></a>
+  {{/if}}
+  {{#if banner}}
+  <a href="/admin/viewbanners"><button class="w3-bar btn" style="height: 40px; color: white;">Banner</button></a>
+  {{else}}
+  <a href="/admin/viewbanners"><button class="w3-bar btn" style="height: 40px; color: #CCDAFF;">Banner</button></a>
+  {{/if}}
+  <a href="/admin/logout"><button class="w3-bar btn mt-5" style="height: 40px; color: white;">Logout</button></a>
+  
+
+</div>
+
+<div class="w3-main" style="margin-left:200px">
+<div class="" style="background-image: linear-gradient(90deg,#8277FF, #6AA6FF);">
+  <button class="w3-bar btn w3-xlarge w3-hide-large" onclick="w3_open()" style="color: white">&#9776;</button>
+</div>
+
+<script>
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+}
+
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+}
+</script>
+     
+</body>
+</html>

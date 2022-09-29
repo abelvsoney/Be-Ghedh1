@@ -1,0 +1,145 @@
+
+
+<section>
+
+    <center class="p-5"><a href="#myModal" class="" data-toggle="modal"><button class="btn btn-success">Add Banner</button></a></center>
+    
+    <div class="container">
+        <table class="table mt-5" id="myTable">
+            <thead>
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Phrase</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each banners}}
+                <tr>
+                    <td>
+                        {{this.banner_img}}
+                    </td>
+                    <td>{{this.banner_title}}</td>
+                    <td>{{this.banner_phrase}}</td>
+                    <td>{{this.banner_route}}</td>
+                    <td><a href="/admin/editbanner?id={{this._id}}" class="btn btn-primary">Edit</a></td>
+                    <td><a href="/admin/deletebanner?id={{this._id}}" class="btn btn-danger">Delete</a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-login">
+		<div class="modal-content">
+			<div class="modal-header">				
+				<h4 class="modal-title">Add Banner</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form action="/admin/addbanner" method="post">
+					<div class="form-group">
+						<i class="fa fa-plus-square-o"></i>
+						<input name="banner_img" id="banner_img" type="url" class="form-control" placeholder="Banner Image Link" required="required">
+					</div>
+                    <div class="form-group">
+						<i class="fa fa-plus-square-o"></i>
+						<input name="banner_title" id="banner_title" type="text" class="form-control" placeholder="Banner Title" required="required">
+					</div>
+                    <div class="form-group">
+						<i class="fa fa-plus-square-o"></i>
+						<input name="banner_phrase" id="banner_phrase" type="text" class="form-control" placeholder="Banner Phrase" required="required">
+					</div>
+                    <div class="form-group">
+						<i class="fa fa-plus-square-o"></i>
+						<input name="banner_route" id="banner_route" type="text" class="form-control" placeholder="Banner Route" required="required">
+					</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-primary btn-block btn-lg" value="Add New Banner">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>     
+
+
+
+
+
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+
