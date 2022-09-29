@@ -1789,11 +1789,17 @@ button.mfp-close {
   overflow: hidden;
 }
 
+.wrap-num-productnoborder {
+  width: 140px;
+  height: 45px;
+  overflow: hidden;
+}
+
 .btn-num-product-up,
 .btn-num-product-down {
   width: 45px;
   height: 100%;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .num-product {
@@ -1801,6 +1807,12 @@ button.mfp-close {
   height: 100%;
   border-left: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
+  background-color: #f7f7f7;
+}
+
+.num-product-noborder {
+  width: calc(100% - 90px);
+  height: 100%;
   background-color: #f7f7f7;
 }
 
@@ -2962,6 +2974,16 @@ input.num-product::-webkit-inner-spin-button {
 }
 
 .how-itemcart1 img {
+  width: 100%;
+}
+.how-itemcart-nodesign {
+  width: 60px;
+  position: relative;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+.how-itemcart-nodesign img {
   width: 100%;
 }
 

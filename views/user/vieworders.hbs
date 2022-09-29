@@ -52,32 +52,23 @@
 								</tr>
 								<tr class="table_row">
 									<td class="column-1">
-										
-										<div class="how-itemcart1">
-											<img src="{{this.product.img_url1}}" alt="IMG">
+										<div class="how-itemcart-nodesign">
+												<img src="{{this.product.img_url1}}" alt="IMG">
 										</div>
-
 									</td>
 									<td class="column-2">{{this.product.product_name}}</td>
 									<td class="column-3">$ {{this.product.price}}</td>
 									<td class="column-4">
-										<div class="wrap-num-product flex-w m-l-auto m-r-0">
-											<button type="button" onclick="changeQuantity('{{this._id}}', '{{this.product._id}}',-1)" disabled>
-												<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-													<i class="fs-16 zmdi zmdi-minus"></i>
-												</div>
-											</button>
-											
+										<div class="wrap-num-productnoborder flex-w m-l-auto m-r-0">
+											<div class="btn-num-product-down"></div>
+											<div class="btn-num-product-down"></div>
+											{{!-- <input class="mtext-104 cl3 txt-center num-product" type="number"
+												name="num-product1" value={{this.quantity}}> --}}
+											<span class="mtext-104 cl3 pt-2 txt-center num-product-noborder"
+												id="{{this.product._id}}">{{this.quantity}}</span>
 
-											{{!-- <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value={{this.quantity}}> --}}
-											<span class="mtext-104 cl3 pt-2 txt-center num-product" id="{{this.product._id}}">{{this.quantity}}</span>
+											<div class="btn-num-product-down"></div>
 
-											<button type="button" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)" disabled>
-												<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-													<i class="fs-16 zmdi zmdi-plus"></i>
-												</div>
-											</button>
-											
 										</div>
 									</td>
 									<td class="column-5">{{this.status}}</td>
