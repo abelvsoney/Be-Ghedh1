@@ -31,7 +31,9 @@ module.exports={
             
         })
         } else {
-            res.render('050 cozastore-master/index', {user: req.cookies.token})
+            bannerhelpers.getAllBanners().then((banners) => {
+                res.render('050 cozastore-master/index', {user: req.cookies.token, banners})
+            })
         }
         
         
@@ -338,11 +340,73 @@ module.exports={
         })
     },
 
-    getForgotPassword: function(req, res) {
-        res.render('user/forgotpassword')
+    getChangePasswordOtpVerification: async function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        await userhelpers.sendOTP(user.email)
+        res.render('user/otplogin', {user: req.cookies.token, email: user.email})
     },
 
-    postForgotPassword: function(req, res) {
+    postChangePasswordVerification: async function(req, res) {
+        console.log(req.body)
+        if(await userhelpers.verifyOTPChangePassword(req.body.otp, req.body.email)) {
+            res.redirect('/changepassword')
+        } else {
+            res.send('wrong otp')
+        }
+    },
+
+    getChangePassword: function(req, res) {
+        res.render('user/forgotpassword',{user: req.cookies.token})
+    },
+
+    postChangePassword: function(req, res) {
+        console.log(req.body)
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        if(req.body.password_first ==req.body.password_second) {
+            userhelpers.changePassword(req.body.password_first, user.email).then(() => {
+                res.redirect('/')
+            })
+        } else {
+            res.send("wrong")
+        }
+    },
+
+    getForgotPassword: function(req, res) {
+        res.render('user/emailselect',{forgotpassword: true})
+    },
+
+    postForgotPassword: async function(req, res) {
+        if(await userhelpers.isUser(req.body.email)){
+            await userhelpers.sendOTP(req.body.email)
+            console.log("ppp")
+            res.render('user/otplogin', {email:req.body.email, forgotpassword: true, user: false})
+        }
+    },
+
+    postForgotPasswordOtp: function(req, res) {
+        console.log(req.body)
+        if(userhelpers.verifyOTPChangePassword(req.body.otp, req.body.email)){
+            console.log("in");
+            res.cookie('email',req.body.email)
+            res.render('user/forgotpassword',{user: false})
+        } else{
+            res.send("error")
+        }
         
+    },
+
+    postForgotPasswordChange: function(req, res) {
+        console.log("iniside herereee");
+        console.log(req.cookies.email)
+        if(req.body.password_first ==req.body.password_second) {
+            userhelpers.changePassword(req.body.password_first, req.cookies.email).then(() => {
+                res.clearCookie('email')
+                res.redirect('/login')
+            })
+        } else {
+            res.send("wrong")
+        }
     }
 }

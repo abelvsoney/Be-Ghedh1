@@ -105,6 +105,9 @@ module.exports = {
                 receipt: ""+orderId
             };
             instance.orders.create(options, function(err, order) {
+                if(err) {
+                    console.log("inside error")
+                }
                 console.log("order", order)
                 resolve(order)
             })

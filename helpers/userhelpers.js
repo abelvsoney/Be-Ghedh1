@@ -157,5 +157,30 @@ module.exports={
             return false;
         }
         
+    },
+
+    verifyOTPChangePassword: async function(otpfromuser, email){
+        console.log(email+otpfromuser,"nnn",uniqueotp);
+        if(email+otpfromuser == uniqueotp){
+            console.log('in truw');
+            return true;
+        } else {
+            console.log('in false');
+            return false;
+        }
+    },
+
+    changePassword: async function(newpassword, email) {
+        return new Promise(async function(resolve, reject) {
+            newpassword = await bcrypt.hash(newpassword, 10);
+        db.get().collection(collections.USER_COLLECTION).updateOne({email: email}, {
+            $set:{
+                password: newpassword
+            }
+        }).then((response) => {
+            resolve(response)
+        })
+        })
+       
     }
 }

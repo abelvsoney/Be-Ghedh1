@@ -88,8 +88,20 @@ router.post("/api/orders", async (req, res) => {
   });
 //
 
+router.get('/changepasswordotpverification', usercontrollers.getChangePasswordOtpVerification);
+
+router.post('/changepasswordotpverification', usercontrollers.postChangePasswordVerification)
+
+router.get('/changepassword', usercontrollers.getChangePassword);
+
+router.post('/changepassword', usercontrollers.postChangePassword);
+
 router.get('/forgotpassword', usercontrollers.getForgotPassword);
 
 router.post('/forgotpassword', usercontrollers.postForgotPassword);
+
+router.post('/forgotpasswordotp', usercontrollers.postForgotPasswordOtp);
+
+router.post('/forgotpasswordchange', usercontrollers.postForgotPasswordChange)
 
 module.exports = router;

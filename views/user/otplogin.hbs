@@ -18725,12 +18725,22 @@ iframe {
 				<div class="login100-pic js-tilt" data-tilt>
 					<img src="https://colorlib.com/etc/lf/Login_v1/images/img-01.png" alt="IMG">
 				</div>
-
+				{{#if user}}
+				<form class="login100-form validate-form" action="/changepasswordotpverification" method="post">
+				<span class="login100-form-title">
+						OTP Veriication
+				</span>
+				{{else if forgotpassword}}
+				<form class="login100-form validate-form" action="/forgotpasswordotp" method="post">
+					<span class="login100-form-title">
+						Enter Otp
+					</span>
+				{{else}}
 				<form class="login100-form validate-form" action="/loginotp" method="post">
 					<span class="login100-form-title">
 						OTP Login
 					</span>
-
+				{{/if}}
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
 						<input class="input100" type="text" name="email" placeholder="Email" id="email" value="{{email}}" readonly>
 						{{!-- <span class="focus-input100"></span> --}}

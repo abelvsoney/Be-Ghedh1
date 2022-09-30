@@ -7,6 +7,7 @@ var hbs = require('express-handlebars');
 const Handlebars = require('handlebars')
 var fileupload = require("express-fileupload");
 var bodyparser = require('body-parser')
+var session = require('express-session')
 
 
 var adminRouter = require('./routes/admin');
@@ -27,6 +28,12 @@ app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({extname:'hbs', defaultLayout:'layout', layoutsDir:__dirname+'/views/layout/', partialsDir:__dirname+'/views/partials/'}))
 
 app.use(bodyparser.json())
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
