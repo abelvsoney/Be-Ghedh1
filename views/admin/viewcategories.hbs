@@ -91,6 +91,8 @@ body {
                     <th scope="col">No.</th>
                     <th scope="col">Brand</th>
                     <th scope="col">Category Name</th>
+                    <th scope="col">Offer</th>
+                    <th scope="col">Delete Offer</th>
                     <th scope="col">Delete</th>
                 </tr>
             </thead>
@@ -100,6 +102,13 @@ body {
                     <td>{{inc @index}}</td>
                     <td>{{this.brand}}</td>
                     <td>{{this.categoryname}}</td>
+                    {{#if this.offer}}
+                    <td><a class="btn btn-primary" href="/admin/addcategoryoffer?id={{this._id}}">Change Offer</a></td>
+                    <td><a class="btn btn-danger" href="/admin/deletecategoryoffer?id={{this._id}}">Delete Offer</a></td>
+                    {{else}}
+                    <td><a class="btn btn-primary" href="/admin/addcategoryoffer?id={{this._id}}">Add Offer</a></td>
+                    <td style="color: red;">No offer</td>
+                    {{/if}}
                     <td><a href="/admin/deletecategory?categoryId={{this.categoryId}}" class="btn btn-danger" onclick="return confirm('Do you want to delete category : {{this.categoryname}} of {{this.brand}}  ?')">Delete</a></td>
                 </tr>
                 {{/each}}

@@ -113,10 +113,17 @@
 						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
 							{{product.product_name}}
 						</h4>
-
-						<span class="mtext-106 cl2">
-							₹{{product.price}}
-						</span>
+                        {{#if product.offer}}
+                        <span class="stext-105" style="display: inline;">
+                            <span style="text-decoration: line-through; color: #666">₹{{product.price}}</span>
+                            <span style="color: red;">₹{{product.offerprice}}</span>
+                            <span style="color: red;" class="mx-3">{{product.productoffer}}% off</span>
+                        </span>
+                        {{else}}
+                        <span class="mtext-106 cl2">
+                            ₹{{product.price}}
+                        </span>
+                        {{/if}}
 
 						<p class="stext-102 cl3 p-t-23">
 							{{product.product_description}}

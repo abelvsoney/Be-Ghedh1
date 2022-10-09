@@ -115,7 +115,15 @@
 							</div>
 						</div>
 						{{#if this.cancelled}}
+
+						{{else if this.returned}}
 						
+						{{else if this.delivered}}
+						<a href="/changeorderstatus?id={{this._id}}&status=Returned">
+							<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" type="button">
+								Return
+							</button>
+						</a>
 						{{else}}
 						<a href="/cancelorder?id={{this._id}}">
 							<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" type="button">

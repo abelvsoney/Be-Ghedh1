@@ -6,6 +6,11 @@ const { response } = require('express');
 module.exports = {
     addToCart: function(userId, productId) {
         return new Promise (async function(resolve, reject) {
+            await db.get().collection(collections.CART_COLLECTION).updateOne({userId: ObjectId(userId)},{
+                $unset:{
+                    coupon_code:""
+                }
+            })
             let proObj = {
                 item : ObjectId(productId),
                 quantity: 1
@@ -69,11 +74,12 @@ module.exports = {
                     $project:{
                         item:1,
                         quantity:1,
+                        coupon_code:1,
                         product: {$arrayElemAt:['$product',0]}
                     }
                 }
             ]).toArray()
-            console.log(cartItems);
+            // console.log(cartItems);
             if(cartItems.length == 0){
                 resolve()
             } else {
@@ -95,8 +101,13 @@ module.exports = {
         })
     },
 
-    deleteProductfromCart: function(proId, userId) {
-        return new Promise (function(resolve, reject) {
+    deleteProductfromCart:async function(proId, userId) {
+        return new Promise (async function(resolve, reject) {
+            await db.get().collection(collections.CART_COLLECTION).updateOne({userId: ObjectId(userId)},{
+                $unset:{
+                    coupon_code:""
+                }
+            })
             db.get().collection(collections.CART_COLLECTION)
                 .updateOne({userId: ObjectId(userId)},
                 {
@@ -108,12 +119,16 @@ module.exports = {
         })
     },
 
-    changeQuantity(details) {
+    changeQuantity:async (details, userId) => {
         details.count = parseInt(details.count)
         details.quan = parseInt(details.quantity)
-
+        await db.get().collection(collections.CART_COLLECTION).updateOne({userId: ObjectId(userId)},{
+            $unset:{
+                coupon_code:""
+            }
+        })
         return new Promise(function (resolve, reject) {
-
+            
             if(details.count == -1 && details.quantity == 1){
                 db.get().collection(collections.CART_COLLECTION)
                     .updateOne({_id: ObjectId(details.cart)},
@@ -169,20 +184,26 @@ module.exports = {
                 {
                     $group:{
                         _id:null,
-                        total:{$sum:{$multiply:['$quantity',{$toInt:'$product.price'}]}}
+                        total:{$sum:{$multiply:['$quantity',{$toInt:'$product.offerprice'},'$product.categoryOffer']}}
                     }
                 }
 
 
             ]).toArray()
 
-
             console.log(total);
             if(total.length == 0){
                 resolve(0)
             } else {
+                let ftotal = total[0].total
+                let cart = await db.get().collection(collections.CART_COLLECTION).findOne({ userId: ObjectId(userId) })
+                if (cart.coupon_code) {
+                    let coupon = await db.get().collection(collections.COUPON_COLLECTION).findOne({ coupon_code: cart.coupon_code })
+                    ftotal = ftotal - ftotal * (coupon.discount / 100)
+                }
                 console.log("hereeee");
-                resolve(total[0].total)
+                ftotal = ftotal.toFixed(0)
+                resolve(ftotal)
             }
             
         })
@@ -198,6 +219,17 @@ module.exports = {
                 resolve(cart.products)
             }
             
+        })
+    },
+
+    isCoupon_Applied:async function(userId) {
+        return new Promise(async function(resolve, reject) {
+            let cart = await db.get().collection(collections.CART_COLLECTION).findOne({userId: ObjectId(userId)});
+            if(cart.coupon_code) {
+                resolve(true)
+            } else {
+                resolve(false)
+            }
         })
     }
 }

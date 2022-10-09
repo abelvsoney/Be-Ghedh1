@@ -47,7 +47,8 @@
 									<th class="column-2"></th>
 									<th class="column-3">Price</th>
 									<th class="column-4">Quantity</th>
-									<th class="column-5"></th>
+									<th class="column-5">Delete</th>
+									<th class="column-6"></th>
 								</tr>
 								{{#each products}}
 								<tr class="table_row">
@@ -80,6 +81,7 @@
 											
 										</div>
 									</td>
+									<td class="column-5"><button style="color: red;" type="button" onclick="deleteFromCart('{{this.product._id}}')">Remove</button></td>
 									{{!-- <td class="column-5">$ {{this.product.price}}</td> --}}
 								</tr>
 								{{/each}}

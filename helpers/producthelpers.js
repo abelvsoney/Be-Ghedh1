@@ -17,6 +17,9 @@ module.exports ={
                 let commonId = productData.product_name + productData.brand_name + productData.category;
                 productData.commonId = commonId
                 productData.blocked = false;
+                productData.quantity = parseInt(productData.quantity)
+                productData.price = parseInt(productData.price)
+                productData.offerprice = productData.price;
                 db.get().collection(collections.PRODUCT_COLLECTION).insertOne(productData).then((response) => {
                     resolve(response)
                 })
@@ -54,13 +57,30 @@ module.exports ={
         })
     },
 
-    updateProduct:function(id, productData){
+    updateProduct:async function(id, productData){
 
         return new Promise (async function (resolve, reject){
+            productData.productoffer = parseInt(productData.productoffer)
+            let p = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectID(id)});
+            if(productData.productoffer > 0) {
+                let offerprice;
+                if(p.productoffer == productData.productoffer) {
+                    offerprice = parseInt(p.offerprice.toFixed(0))
+                } else {
+                    offerprice = p.price - (p.price*(productData.productoffer/100))
+                    offerprice = parseInt(offerprice.toFixed(0))
+                }
+                productData.offerprice = offerprice;
+            } else {
+                productData.offerprice = p.price;
+            }
+
             let productId = productData.product_name+productData.brand_name+productData.category+productData.size+productData.color.trim()
             productData.productId = productId;
             let commonId = productData.product_name+productData.brand_name+productData.category;
             productData.commonId = commonId;
+            productData.quantity = parseInt(productData.quantity)
+            productData.price = parseInt(productData.price)
 
                 db.get().collection(collections.PRODUCT_COLLECTION).updateOne({ _id: ObjectID(id) }, {
                     $set: {
@@ -76,7 +96,9 @@ module.exports ={
                         img_url1: productData.img_url1,
                         img_url3: productData.img_url2,
                         img_url3: productData.img_url3,
-                        img_url4: productData.img_url4
+                        img_url4: productData.img_url4,
+                        productoffer: productData.productoffer,
+                        offerprice: productData.offerprice
                     }
                 }).then((response) => {
                     console.log(response)

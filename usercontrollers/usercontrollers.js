@@ -7,6 +7,7 @@ const { response } = require('express')
 const orderhelpers = require('../helpers/orderhelpers')
 const wishlisthelpers = require('../helpers/wishlisthelpers')
 const bannerhelpers = require('../helpers/bannerhelpers')
+const couponhelpers = require('../helpers/couponhelpers')
 require('dotenv').config()
 
 // function getUserDetails (req, res){
@@ -43,6 +44,11 @@ module.exports={
     getProducts:function(req, res){
         producthelpers.getAllActiveProducts().then((response) => {
             let products = response;
+            products.forEach(element => {
+                if(element.price > element.offerprice){
+                    element.offer = true
+                }
+            });
             res.render('050 cozastore-master/product',{user: req.cookies.token, products})
         })
         
@@ -118,7 +124,11 @@ module.exports={
     getViewProduct: async function(req, res) {
         let cartCount = await carthelpers.getCartCount(req.user._id)
         producthelpers.getProductById(req.query.id).then((response) => {
-            let product = response;  
+            let product = response;
+            console.log(product);
+            if(product.price > product.offerprice) {
+                product.offer = true;
+            } 
             producthelpers.getSizesOfProduct(product.commonId).then((sizes) => {
                 carthelpers.getCartbyUserId(req.user._id).then((cartItems) => {
                     res.render('050 cozastore-master/product-detail',{user: req.cookies.token, product, sizes, cartCount, cartItems})
@@ -228,7 +238,7 @@ module.exports={
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         console.log(req.body);
-        carthelpers.changeQuantity(req.body).then((response) => {
+        carthelpers.changeQuantity(req.body, user._id).then((response) => {
             carthelpers.getTotalAmount(user._id).then((total) => {
                 response.total = total;
                 res.json(response)
@@ -241,9 +251,17 @@ module.exports={
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         let addresses = await addresshelpers.getAllAddressbyUserId(user._id);
         let products = await carthelpers.getCartbyUserId(user._id);
+        let coupon_codeapplied = await carthelpers.isCoupon_Applied(user._id)
+        console.log(products,"\nproducts")
+        products.forEach(element => {
+            console.log(element.quantity);
+            if(element.quantity > element.product.quantity) {
+                res.redirect('/viewcart')
+            }
+        });
         carthelpers.getTotalAmount(user._id).then((total) => {
 
-            res.render('user/checkout',{user: req.cookies.token, total, products, addresses})
+            res.render('user/checkout',{user: req.cookies.token, total, products, addresses, coupon_codeapplied})
         })
     },
 
@@ -286,6 +304,10 @@ module.exports={
             response.forEach(order => {
                 if(order.status == "Cancelled") {
                     order.cancelled = true
+                } else if(order.status == "Delivered"){
+                    order.delivered = true;
+                } else if(order.status == "Returned") {
+                    order.returned = true;
                 }
             });
             res.render('user/vieworders',{user:req.cookies.token, orders: response})
@@ -408,5 +430,63 @@ module.exports={
         } else {
             res.send("wrong")
         }
+    },
+
+    getMyProfile: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        userhelpers.getUserDetails(user._id).then((userd) => {
+            res.render('user/myprofile',{userd, user: req.cookies.token})
+        })
+    },
+
+    getEditProfile: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        userhelpers.getUserDetails(user._id).then((userd) => {
+            res.render('user/editprofile',{userd, user: req.cookies.token})
+        })
+    },
+
+    postEditProfile: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        let userid = user._id;
+        console.log(req.body)
+        userhelpers.editProfile(req.body, userid).then((response) => {
+            if(response) {
+                res.clearCookie('token')
+                userhelpers.getUserDetails(userid).then((user) => {
+                    const token = jwt.sign(user, process.env.USER_SECRET_KEY);
+                    res.cookie('token', token, { httponly: true });
+                    res.redirect('/myprofile')
+                })
+            } else {
+                res.send("Already exists")
+            }
+        })
+    },
+
+    postVerifyAndAddCoupon: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        couponhelpers.verifyAndAddCoupon(req.body.coupon_code, user._id).then(() => {
+            res.redirect('/checkout')
+        })
+    },
+
+    changeOrderStatus: function(req, res) {
+        console.log((req.query.status));
+        orderhelpers.changeOrderStatus(req.query.id, req.query.status).then(() => {
+            res.redirect('/vieworders')
+        })
+    },
+
+    getRemoveCoupon: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        couponhelpers.removeCouponFromCart(user._id).then(() => {
+            res.redirect('/checkout')
+        })
     }
 }

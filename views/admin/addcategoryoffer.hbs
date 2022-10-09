@@ -1,0 +1,31 @@
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<form class="form-horizontal p-5" action="/admin/addcategoryoffer?id={{categoryDetails._id}}" method="post">
+<fieldset>
+
+<center class="p-5"><h3 style="text-decoration: underline;">Add Category Offer</h3></center>
+
+<center>
+
+ <!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="brand_name">Category Offer Percentage</label>  
+  <div class="col-md-4">
+  <input id="categoryoffer" name="categoryoffer" value="{{categoryDetails.offer}}" placeholder="Category Offer (%)" class="form-control input-md" required="" type="number" min="1" max="100">
+  </div>
+</div>
+
+
+<div class="form-group">
+  <label class="col-md-4 control-label" for="singlebutton"></label>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+  </div>
+</center>
+
+</fieldset>
+</form>

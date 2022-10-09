@@ -300,10 +300,18 @@
 								<a href="/viewproduct?id={{this._id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									{{this.product_name}}
 								</a>
-
+								{{#if this.offer}}
+								<span class="stext-105" style="display: inline;">
+									<span style="text-decoration: line-through; color: #666">₹{{this.price}}</span>
+									<span style="color: red;">₹{{this.offerprice}}</span>
+									<span style="color: red;" class="mx-3">{{this.productoffer}}% off</span>
+									
+								</span>
+								{{else}}
 								<span class="stext-105 cl3">
 									₹{{this.price}}
 								</span>
+								{{/if}}
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">

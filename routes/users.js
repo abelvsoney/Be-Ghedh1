@@ -102,6 +102,18 @@ router.post('/forgotpassword', usercontrollers.postForgotPassword);
 
 router.post('/forgotpasswordotp', usercontrollers.postForgotPasswordOtp);
 
-router.post('/forgotpasswordchange', usercontrollers.postForgotPasswordChange)
+router.post('/forgotpasswordchange', usercontrollers.postForgotPasswordChange);
+
+router.get('/myprofile', usercontrollers.getMyProfile);
+
+router.get('/editprofile', usercontrollers.getEditProfile);
+
+router.post('/editprofile', usercontrollers.postEditProfile)
+
+router.post('/verifyandaddcoupon', usercontrollers.postVerifyAndAddCoupon);
+
+router.get('/changeorderstatus', usercontrollers.changeOrderStatus);
+
+router.get('/removecoupon', usercontrollers.getRemoveCoupon)
 
 module.exports = router;

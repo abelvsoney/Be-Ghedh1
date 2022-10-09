@@ -182,5 +182,78 @@ module.exports={
         })
         })
        
+    },
+
+    getUserDetails: function(userId) {
+        return new Promise(function(resolve, reject) {
+            db.get().collection(collections.USER_COLLECTION).findOne({_id: ObjectId(userId)}).then((response) => {
+                resolve(response);
+            })
+        })
+    },
+
+    editProfile:async function(userData, userId) {
+        return new Promise(async function(resolve, reject) {
+            var currentuser = await db.get().collection(collections.USER_COLLECTION).findOne({_id: ObjectId(userId)});
+            console.log(currentuser,"\ncurrent user")
+            if(currentuser.number == userData.number && currentuser.email == userData.email) {
+                console.log("1");
+                db.get().collection(collections.USER_COLLECTION).updateOne({_id: ObjectId(userId)}, {
+                    $set:{
+                        name: userData.name
+                    }
+                }).then(() => {
+                    resolve(true)
+                })
+                
+            } else if(currentuser.number == userData.number) {
+                console.log("2");
+                var isThere = await db.get().collection(collections.USER_COLLECTION).findOne({email: userData.email})
+                if(isThere) {
+                    resolve(false)
+                } else {
+                    db.get().collection(collections.USER_COLLECTION).updateOne({_id: ObjectId(userId)}, {
+                        $set:{
+                            name: userData.name,
+                            email: userData.email
+                        }
+                    }).then(() => {
+                        resolve(true)
+                    })
+                }
+            } else if(currentuser.email == userData.email) {
+                console.log("3");
+                var isThere = await db.get().collection(collections.USER_COLLECTION).findOne({number: userData.number})
+                if(isThere) {
+                    resolve(false)
+                } else {
+                    db.get().collection(collections.USER_COLLECTION).updateOne({_id: ObjectId(userId)}, {
+                        $set:{
+                            name: userData.name,
+                            number: userData.number
+                        }
+                    }).then(() => {
+                        resolve(true)
+                    })
+                }
+            } else {
+                console.log("4");
+                var isThere = await db.get().collection(collections.USER_COLLECTION).findOne({ $or: [{ email: userData.email }, { number: userData.number }] })
+                if (isThere) {
+                    resolve(false)
+                } else {
+                    db.get().collection(collections.USER_COLLECTION).updateOne({ _id: ObjectId(userId) }, {
+                        $set: {
+                            name: userData.name,
+                            email: userData.email,
+                            number: userData.number
+                        }
+                    }).then(() => {
+                        resolve(true)
+                    })
+                }
+            }
+            
+        })
     }
 }

@@ -94,5 +94,20 @@ router.get('/day', admincontrollers.getDay)
 
 // router.get('/addbanner', admincontrollers.getAddBanner)
 
+router.get('/addcategoryoffer', admincontrollers.getAddCategoryOffer);
+
+router.post('/addcategoryoffer', admincontrollers.postAddCategoryOffer);
+
+router.get('/deletecategoryoffer', admincontrollers.getDeleteCategoryOffer);
+
+router.get('/viewcoupons', admincontrollers.getViewCoupons);
+
+router.post('/addcoupon', admincontrollers.postAddCoupon)
+
+router.get('/deletecoupon', admincontrollers.getDeleteCoupon)
+
+router.get('/editcoupon', admincontrollers.getEditCoupon)
+
+router.post('/editcoupon', admincontrollers.postEditCoupon)
 
 module.exports = router;

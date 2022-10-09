@@ -26,6 +26,18 @@ module.exports = {
             };
 
             db.get().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then(async (response) => {
+                products.forEach(async element => {
+                    console.log(element,"products")
+                    console.log();
+                    let product = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id: element.item});
+                    let pquantity = Number(product.quantity);
+                    pquantity = pquantity - element.quantity
+                    await db.get().collection(collections.PRODUCT_COLLECTION).updateOne({_id: element.item}, {
+                        $set:{
+                            quantity: pquantity
+                        }
+                    })
+                });
                 await db.get().collection(collections.CART_COLLECTION).deleteOne({userId: ObjectId(userId)})
                 // console.log("response",response.insertedId)
                 resolve(response)
@@ -70,8 +82,8 @@ module.exports = {
             ]).toArray()
 
             let orderIds = await db.get().collection(collections.ORDER_COLLECTION).find({userId: ObjectId(userId)}).project({_id:1}).toArray()
-            console.log("\n",orderIds,"\n");
-            console.log(orders)
+            // console.log("\n",orderIds,"\n");
+            // console.log(orders)
             resolve(orders, orderIds)
         })
     },

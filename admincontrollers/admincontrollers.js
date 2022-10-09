@@ -17,7 +17,8 @@ const charthelpers = require('../helpers/charthelpers');
 router.use(fileUpload())
 // const multer = require('multer')
 require('dotenv').config()
-var chartjs = require('chart.js')
+var chartjs = require('chart.js');
+const couponhelpers = require('../helpers/couponhelpers');
 
 // const storage = multer.diskStorage({
 //     destination: function(req, file, cb){
@@ -35,7 +36,10 @@ module.exports = {
     //admin dashboard
     getDasboard:function(req, res) {
         charthelpers.findOrdersByDay().then((data) => {
-            res.render('admin/dashboard',{admin:req.cookies.admintoken, dashboard:true, data});
+            orderhelpers.getAllOrders().then((order) => {
+                res.render('admin/dashboard',{admin:req.cookies.admintoken, dashboard:true, data, order});
+            })
+            
         })
         
     },
@@ -249,6 +253,8 @@ module.exports = {
                     order.placed = true
                 } else if (order.status == "Delivered") {
                     order.delivered = true
+                } else if(order.status == "Returned"){
+                    order.returned = true
                 } else {
                     order.shipped = true;
                 }
@@ -294,6 +300,58 @@ module.exports = {
         charthelpers.findOrdersByDay().then((data) => {
             console.log("data\n",data)
             res.json(data)
+        })
+    },
+
+    getAddCategoryOffer: function(req, res) {
+        categoryhelpers.getCategoryDetailsById(req.query.id).then((categoryDetails) => {
+            // console.log(categoryDetails);
+            res.render('admin/addcategoryoffer',{admin:true, categories: true, categoryDetails})
+        })
+    },
+
+    postAddCategoryOffer: function(req, res) {
+        console.log(req.body);
+        console.log(req.query.id);
+        categoryhelpers.addCategoryOffer(req.query.id, req.body).then(() => {
+            res.redirect('/admin/viewcategories')
+        })
+    },
+
+    getDeleteCategoryOffer: function(req, res) {
+        categoryhelpers.deleteCategoryOffer(req.query.id).then(() => {
+            res.redirect('/admin/viewcategories')
+        })
+    },
+
+    getViewCoupons: function(req, res) {
+        couponhelpers.getAllCoupons().then((coupons) => {
+            res.render('admin/viewcoupons',{admin: true, coupons})
+        })  
+    },
+
+    postAddCoupon: function(req, res) {
+        console.log(req.body);
+        couponhelpers.addCoupon(req.body).then((response) => {
+            res.redirect('/admin/viewcoupons')
+        })
+    },
+
+    getDeleteCoupon: function(req, res) {
+        couponhelpers.deleteCoupon(req.query.id).then(() => {
+            res.redirect('/admin/viewcoupons')
+        })
+    },
+
+    getEditCoupon: function(req, res) {
+        couponhelpers.getCouponById(req.query.id).then((coupon) => {
+            res.render('admin/editcoupon',{admin:true, coupon})
+        })
+    },
+
+    postEditCoupon: function(req, res) {
+        couponhelpers.editCoupon(req.query.id, req.body).then(() => {
+            res.redirect('/admin/viewcoupons')
         })
     }
 }
