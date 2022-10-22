@@ -114,6 +114,12 @@ router.post('/verifyandaddcoupon', usercontrollers.postVerifyAndAddCoupon);
 
 router.get('/changeorderstatus', usercontrollers.changeOrderStatus);
 
-router.get('/removecoupon', usercontrollers.getRemoveCoupon)
+router.get('/removecoupon', usercontrollers.getRemoveCoupon);
+
+router.get('/filterbybrand', usercontrollers.getFilterByBrand)
+
+router.get('/filterbycategory', usercontrollers.getFilterByCategory);
+
+router.get('/')
 
 module.exports = router;

@@ -27,42 +27,12 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each orders}}
+                {{#each order}}
                 <tr>
                     <td>{{inc @index}}</td>
                     <td>{{this._id}}</td>
                     <td>{{this.totalAmount}}</td>
-                    {{#if this.cancelled}}
-                    <td>Cancelled</td>
-                    {{else if this.delivered}}
-                    <td>Delivered</td>
-                    {{else if this.shipped}}
-                    <td>
-                      <select name="status" id="status" onchange="location = this.value">
-                        <option value="Placed" selected disabled >Shipped</option>
-                        <option value="/admin/changeOrderStatus?id={{this._id}}&status=Delivered">Delivered</option>
-                        <option value="/admin/cancelorder?id={{this._id}}">Cancel</option>
-                      </select>
-                    </td>
-                    {{else if this.pending}}
-                    <td>
-                      <select name="status" id="status" onchange="location = this.value">
-                        <option value="Placed" selected disabled >Pending</option>
-                        <option value="/admin/cancelorder?id={{this._id}}">Cancel</option>
-                      </select>
-                    </td>
-                    {{else if this.returned}}
-                    <td>Returned</td>
-                    {{else}}
-                    <td>
-                      <select name="status" id="status" onchange="location = this.value;">
-                        <option value="Placed" selected disabled >Placed</option>
-                        <option value="/admin/changeOrderStatus?id={{this._id}}&status=Shipped">Shipped</option>
-                        <option value="/admin/changeOrderStatus?id={{this._id}}&status=Delivered">Delivered</option>
-                        <option value="/admin/cancelorder?id={{this._id}}">Cancel</option>
-                      </select>
-                    </td>
-                    {{/if}}
+                    <td>{{this.status}}</td>
                     <td>{{this.paymentmethod}}</td>
                     <td>{{this.date}}</td>
                     {{!-- <td><a href="#" class="btn btn-success">View</a></td> --}}
@@ -97,7 +67,10 @@
  
     // DataTable
     var table = $('#example').DataTable({
-
+      dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
         initComplete: function () {
             // Apply the search
             this.api()

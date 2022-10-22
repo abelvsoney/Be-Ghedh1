@@ -6,7 +6,7 @@
         <h5 class="mb-0">Edit Profile</h5>
       </div>
       <div class="card-body">
-        <form class="mt-5" action="/editprofile" method="post">
+        <form name="editp" id="editp" class="mt-5" action="/editprofile" method="post">
 
           <!-- Text input -->
           <div class="form-outline mb-4">
@@ -40,6 +40,80 @@
     </div>
   </div>
 </center>
-
-  
 </div>
+
+{{!-- <script>
+
+  $(document).ready(function(){
+
+  jQuery.validator.addMethod("noSpace", function(value, element) { 
+  return value.indexOf(" ") < 0 && value != ""; 
+  }, "No space please and don't leave it empty");
+
+
+
+  $("#editp").validate({
+    rules: {
+
+
+        name: {
+            noSpace: true,
+            required: true,
+            minlength: 2,
+            maxlength:15
+        },
+        email: {
+            required: true,
+            email: true
+        },
+        number: {
+          required: true,
+          number: true
+        }
+
+    },
+    messages: {
+
+        name: {
+            required: "Please enter a username",
+            maxlength:"max length 15 digits",
+            minlength: "Your username must consist of at least 2 characters"
+        },
+        email: {
+            required: "Please provide a password",
+            minlength: "Your password must be at least 5 characters long"
+        },
+        number: {
+            required: "Please provide a confirm password",
+            minlength: "Your password must be at least 5 characters long",
+            equalTo: "Please enter the same password as above"
+
+    }
+});
+
+$('#submit').click(function() {
+    var valid = $("#editp").valid();
+    if(!valid) {
+      return false;
+    }
+</script> --}}
+
+<script>
+  let form = document.getElementById("editp")
+  form.addEventListener('submit', function(e) {
+    if(document.getElementById("name").value.trim() == ""){
+      alert('Enter Valid Username')
+      e.preventDefault()
+    } else if(! document.getElementById("email").value.includes(".com")){
+      alert('Enter Valid Email')
+      e.preventDefault()
+    } else if(document.getElementById("number").value.trim().length != 10) {
+      alert('Enter Valid Number')
+      e.preventDefault()
+    }
+  })
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>

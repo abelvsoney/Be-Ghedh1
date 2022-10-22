@@ -79,12 +79,15 @@ module.exports = {
                             resolve(true)
                         })
                     } else{
+                        console.log(1);
                         resolve(false)
                     }
                 } else{
+                    console.log(2);
                     resolve(false)
                 }
             } else {
+                console.log(3);
                 resolve(false)
             }
         })

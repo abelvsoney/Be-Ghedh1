@@ -8,6 +8,8 @@ const orderhelpers = require('../helpers/orderhelpers')
 const wishlisthelpers = require('../helpers/wishlisthelpers')
 const bannerhelpers = require('../helpers/bannerhelpers')
 const couponhelpers = require('../helpers/couponhelpers')
+const brandhelpers =  require('../helpers/brandhelpers')
+const categoryhelpers = require('../helpers/categoryhelpers')
 require('dotenv').config()
 
 // function getUserDetails (req, res){
@@ -24,10 +26,17 @@ module.exports={
         if(token){
             let user = jwt.verify(token, process.env.USER_SECRET_KEY)
             let cartCount = await carthelpers.getCartCount(user._id)
+            let products = await producthelpers.getAllUniqueProducts();
+            products = products.slice(0,4)
+            products.forEach(element => {
+                if(element.price > element.offerprice){
+                    element.offer = true
+                }
+            });
             carthelpers.getCartbyUserId(user._id).then((response) => {
                 console.log(response+'\n hiii');
                 bannerhelpers.getAllBanners().then((banners) => {
-                    res.render('050 cozastore-master/index', {user: req.cookies.token, cartCount, cartItems:response, banners})
+                    res.render('050 cozastore-master/index', {user: req.cookies.token, cartCount, cartItems:response, banners, products})
                 })
             
         })
@@ -41,15 +50,19 @@ module.exports={
         
     },
 
-    getProducts:function(req, res){
-        producthelpers.getAllActiveProducts().then((response) => {
+    getProducts:async function(req, res){
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY)
+        let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
+        let brands = await brandhelpers.getAllBrands()
+        producthelpers.getAllUniqueProducts().then((response) => {
             let products = response;
             products.forEach(element => {
                 if(element.price > element.offerprice){
                     element.offer = true
                 }
             });
-            res.render('050 cozastore-master/product',{user: req.cookies.token, products})
+            res.render('050 cozastore-master/product',{user: req.cookies.token, products, brands})
         })
         
     },
@@ -128,11 +141,18 @@ module.exports={
             console.log(product);
             if(product.price > product.offerprice) {
                 product.offer = true;
+            }
+            if(product.quantity < 1) {
+                product.outofstock = true;
             } 
             producthelpers.getSizesOfProduct(product.commonId).then((sizes) => {
+                sizes.forEach((item, index, arr) => {
+                    if(item.size == product.size) {
+                        arr.splice(index, 1);
+                    }
+                });
                 carthelpers.getCartbyUserId(req.user._id).then((cartItems) => {
                     res.render('050 cozastore-master/product-detail',{user: req.cookies.token, product, sizes, cartCount, cartItems})
-                    console.log(sizes)
                 })
             })
         })
@@ -209,18 +229,33 @@ module.exports={
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         carthelpers.addToCart(user._id, req.params.id).then((response) => {
+            console.log(response);
             // res.redirect('/viewcart')
             res.json({status:true})
         })
     },
 
-    getViewCart: function(req, res) {
+    getViewCart:async function(req, res) {
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        let offertotal =await carthelpers.getTotalOfferAmount(user._id)
+        let coupDisc = await carthelpers.getCouponDiscount(user._id, offertotal)
+        console.log(offertotal);
         carthelpers.getCartbyUserId(user._id).then((response) => {
+            let products = response;
+            if (products) {
+                products.forEach(element => {
+                    if (element.price > element.offerprice) {
+                        element.offer = true
+                    }
+                });
+            }
+            
             carthelpers.getTotalAmount(user._id).then((total) => {
+                offertotal = total - offertotal;
+                let subtotal = total - (offertotal + coupDisc)
                 console.log(response);
-                res.render('050 cozastore-master/shopping-cart',{user: req.cookies.token, products: response, total})
+                res.render('050 cozastore-master/shopping-cart',{user: req.cookies.token, products: response, total, offertotal, coupDisc, subtotal})
             })
         })
     },
@@ -249,20 +284,29 @@ module.exports={
     getCheckout: async function(req, res) {
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        let offertotal =await carthelpers.getTotalOfferAmount(user._id)
+        let coupDisc = await carthelpers.getCouponDiscount(user._id, offertotal)
         let addresses = await addresshelpers.getAllAddressbyUserId(user._id);
         let products = await carthelpers.getCartbyUserId(user._id);
         let coupon_codeapplied = await carthelpers.isCoupon_Applied(user._id)
         console.log(products,"\nproducts")
-        products.forEach(element => {
+        if(products) {
+            products.forEach(element => {
+                element.product.tprice = element.quantity * element.product.offerprice
             console.log(element.quantity);
             if(element.quantity > element.product.quantity) {
                 res.redirect('/viewcart')
             }
         });
         carthelpers.getTotalAmount(user._id).then((total) => {
-
-            res.render('user/checkout',{user: req.cookies.token, total, products, addresses, coupon_codeapplied})
+            offertotal = total - offertotal;
+            let subtotal = total - (offertotal + coupDisc)
+            res.render('user/checkout',{user: req.cookies.token, total, products, addresses, coupon_codeapplied, offertotal, coupDisc, subtotal})
         })
+        } else {
+            res.redirect('/viewcart')
+        }
+        
     },
 
     postPlaceOrder: async function(req, res) {
@@ -272,12 +316,17 @@ module.exports={
         console.log(user);
         let products = await carthelpers.getCartProductList(user._id);
         console.log("products in cart", products);
-        let totalPrice = await carthelpers.getTotalAmount(user._id);
-        orderhelpers.placeOrder(user._id, req.body, products, totalPrice).then((response) => {
+        let offertotal =await carthelpers.getTotalOfferAmount(user._id)
+        let coupDisc = await carthelpers.getCouponDiscount(user._id, offertotal)
+        let total = await carthelpers.getTotalAmount(user._id);
+        offertotal = total - offertotal;
+        let subtotal = total - (offertotal + coupDisc)
+        console.log(subtotal);
+        orderhelpers.placeOrder(user._id, req.body, products, subtotal, total, offertotal, coupDisc).then((response) => {
             if(req.body.paymentmethod == 'COD'){
                 res.json({status: true})
             } else if (req.body.paymentmethod == 'RazorPay'){
-                orderhelpers.generateRazorPay(response.insertedId, totalPrice).then((orderresponse) => {
+                orderhelpers.generateRazorPay(response.insertedId, subtotal).then((orderresponse) => {
                     console.log("orderresponse", orderresponse);
                     res.json(orderresponse)
                 })
@@ -301,6 +350,7 @@ module.exports={
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         orderhelpers.getAllOrdersbyUserId(user._id).then((response, orderIds) => {
+            console.log(response);
             response.forEach(order => {
                 if(order.status == "Cancelled") {
                     order.cancelled = true
@@ -468,10 +518,11 @@ module.exports={
     },
 
     postVerifyAndAddCoupon: function(req, res) {
+        console.log(req.body.coupon_code);
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
-        couponhelpers.verifyAndAddCoupon(req.body.coupon_code, user._id).then(() => {
-            res.redirect('/checkout')
+        couponhelpers.verifyAndAddCoupon(req.body.coupon_code, user._id).then((response) => {
+            res.json(response)
         })
     },
 
@@ -488,5 +539,51 @@ module.exports={
         couponhelpers.removeCouponFromCart(user._id).then(() => {
             res.redirect('/checkout')
         })
+    },
+
+    getFilterByBrand:async function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY)
+        let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
+        let brands = await brandhelpers.getAllBrands()
+        let currentbrand = req.query.bname;
+        console.log(brands);
+        brands.forEach((item, index, arr) => {
+            if(item.brandname == currentbrand) {
+                arr.splice(index, 1);
+            }
+        });
+        let categories =await categoryhelpers.getCategorybyBrand(currentbrand)
+        producthelpers.getAllProductsByBrand(req.query.bname).then((response) => {
+            let products = response;
+            products.forEach(element => {
+                if(element.price > element.offerprice){
+                    element.offer = true
+                }
+            });
+            res.render('050 cozastore-master/filterbybrand',{user: req.cookies.token, products, brands, currentbrand, categories})
+        })
+    },
+
+    getFilterByCategory: async function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        let brands = await brandhelpers.getAllBrands()
+        
+        
+        producthelpers.getAllProductsByBrand_Category(req.query.catid).then(async (resp) => {
+            let products = resp.products;
+            let currentbrand = resp.currentBrand;
+            console.log(currentbrand);
+            let categories =await categoryhelpers.getCategorybyBrand(currentbrand)
+            brands.forEach((item, index, arr) => {
+                if(item.brandname == currentbrand) {
+                    arr.splice(index, 1);
+                }
+            });
+            res.render('050 cozastore-master/filterbybrand',{user: req.cookies.token, products, brands, currentbrand, categories})
+        })
+
+        
     }
 }

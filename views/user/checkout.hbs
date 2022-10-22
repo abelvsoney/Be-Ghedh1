@@ -25,6 +25,7 @@
 	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -61,7 +62,7 @@
 										</div>
 									</td>
 									<td class="column-2">{{this.product.product_name}}</td>
-									<td class="column-3">$ {{this.product.price}}</td>
+									<td class="column-3">$ {{this.product.offerprice}}</td>
 									<td class="column-4">
 										<div class="wrap-num-productnoborder flex-w m-l-auto m-r-0">
 											<div class="btn-num-product-down"></div>
@@ -75,7 +76,7 @@
 
 										</div>
 									</td>
-									<td class="column-5">$ {{this.product.price}}</td>
+									<td class="column-5">$ {{this.product.tprice}}</td>
 								</tr>
 								{{/each}}
 							</table>
@@ -83,12 +84,24 @@
 
 						<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
 							<div class="flex-w flex-m m-r-20 m-tb-5">
-								<form action="/verifyandaddcoupon" method="post">
-									<input id="coupon_code" name="coupon_code" class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" placeholder="Coupon Code">
-									<button class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" type="submit">
-										Apply coupon
-									</button>
-								</form>
+									{{#if coupon_codeapplied}}
+										<input id="coupon_code" name="coupon_code" class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
+											type="text" placeholder="Coupon Code" value="{{coupon_codeapplied}}" readonly>
+										<button class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" type="button" onclick="applycoupon()">
+											Apply coupon
+										</button>
+										<div class="flex-box">
+											<span class="flex">Coupon Applied</span>
+											<a class="flex" href="/removecoupon"><span>Remove Coupon</span></a>
+										</div>
+										
+									{{else}}
+										<input id="coupon_code" name="coupon_code" class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5"
+											type="text" placeholder="Coupon Code">
+										<button class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" type="button" onclick="applycoupon()">
+											Apply coupon
+										</button>
+									{{/if}}
 							</div>
 						</div>
 					</div>
@@ -113,6 +126,42 @@
 								<span>$ </span>
 								<span class="mtext-110 cl2" id="total">
 									{{total}}
+								</span>
+							</div>
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Offer:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span>- </span>
+								<span class="mtext-110 cl2" id="total">
+									{{offertotal}}
+								</span>
+							</div>
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Coupon:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span>- </span>
+								<span class="mtext-110 cl2" id="total">
+									{{coupDisc}}
+								</span>
+							</div>
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Sub Total:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span>$ </span>
+								<span class="mtext-110 cl2" id="total">
+									{{subtotal}}
 								</span>
 							</div>
 						</div>
@@ -177,19 +226,23 @@
 						<h4 class="mtext-109 cl2 p-b-30">
 							Payment Methods
 						</h4>
-						<span><label for="paymentmethod">COD</label></span>
-						<input class="radio" type="radio" id="paymentmethod" name="paymentmethod" onclick="toggle()" value="COD" placeholder="COD" required>
-						<span><label for="paymentmethod">Razorpay</label></span>
-						<input type="radio" id="paymentmethod" name="paymentmethod" value="RazorPay" onclick="toggle()" placeholder="RazorPay" required>
-						<span><label for="paymentmethod">Paypal</label></span>
-						<input type="radio" id="paymentmethod" name="paymentmethod" value="Paypal" onclick="toggle1()" placeholder="Paypal" required>
+						<label class="radio">
+							<input class="radio" type="radio" id="paymentmethod" name="paymentmethod" onclick="toggle()" value="COD" placeholder="COD" required> COD
+						</label>
+						
+						<label class="radio">
+						<input type="radio" id="paymentmethod" name="paymentmethod" value="RazorPay" onclick="toggle()" placeholder="RazorPay" required> Razorpay
+						</label>
+						<label class="radio">
+						<input type="radio" id="paymentmethod" name="paymentmethod" value="Paypal" onclick="toggle1()" placeholder="Paypal" required> Paypal
+						</label>
 						 <div class="btn clr" id="paypal-button-container"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</form>
-	{{#if coupon_codeapplied}}
+	{{!-- {{#if coupon_codeapplied}}
 	<span>Coupon Applied</span>
 	<a href="/removecoupon"><span>Remove Coupon</span></a>
 	<form action="/verifyandaddcoupon" method="post">
@@ -207,7 +260,7 @@
 			Apply coupon
 		</button>
 	</form>
-	{{/if}}
+	{{/if}} --}}
 
 	<!-- Back to top -->
 	<div class="btn-back-to-top" id="myBtn">
@@ -413,6 +466,23 @@
     list.remove("sft");
   }
 </script>
+<script>
+	function applycoupon() {
+		let coupon_code = document.getElementById("coupon_code").value
+		console.log(coupon_code)
+		$.ajax({
+			url:'/verifyandaddcoupon',
+			method: 'post',
+			data: {
+				coupon_code
+			},
+			success: (response) => {
+				location.reload()
+			}
+		})
+	}
+</script>
+
 </body>
 
 </html>

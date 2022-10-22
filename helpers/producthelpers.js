@@ -2,6 +2,7 @@ var db = require('../database/connection');
 var collections = require('../database/collections');
 const { response } = require('express');
 const { ObjectID } = require('bson');
+const { CATEGORIES_COLLECTION } = require('../database/collections');
 
 module.exports ={
     addProduct:function(productData){
@@ -12,6 +13,15 @@ module.exports ={
             if(isThere){
                 resolve(false)
             } else {
+                let categoryDetails = await db.get().collection(CATEGORIES_COLLECTION).findOne({brand: productData.brand_name, categoryname: productData.category});
+                if(categoryDetails.offer) {
+                    productData.categoryOffer = categoryDetails.offer;
+                    // productData.totalOffer = categoryDetails.offer;
+                } else {
+                    productData.categoryOffer = 0;
+                    productData.totalOffer = 0;
+                }
+
                 let sizeId = productData.product_name + productData.brand_name + productData.category + productData.size;
                 productData.sizeId = sizeId;
                 let commonId = productData.product_name + productData.brand_name + productData.category;
@@ -20,6 +30,8 @@ module.exports ={
                 productData.quantity = parseInt(productData.quantity)
                 productData.price = parseInt(productData.price)
                 productData.offerprice = productData.price;
+                productData.productoffer = 0;
+                console.log(productData);
                 db.get().collection(collections.PRODUCT_COLLECTION).insertOne(productData).then((response) => {
                     resolve(response)
                 })
@@ -49,8 +61,35 @@ module.exports ={
         })
     },
     
-    getProductById:function(id){
-        return new Promise (function (resolve, reject){
+    getProductById:async function(id){
+        return new Promise (async function (resolve, reject){
+            let productData = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectID(id)});
+            console.log(productData)
+            let coffer = productData.totalOffer - productData.productoffer;
+            if(coffer != productData.categoryOffer) {
+                if(productData.categoryOffer > 0) {
+                    let off = productData.totalOffer - coffer;
+                    off = off + productData.categoryOffer;
+                    productData.totalOffer = off;
+
+                    let catOffprice = (coffer/100) * productData.price;
+                    let ucofferprice = productData.price + catOffprice;
+                    let offp = off/100 * productData.price;
+                    offp = parseInt(offp.toFixed(0))
+                    productData.offerprice = ucofferprice - offp;
+                } else {
+                    productData.totalOffer = productData.productoffer;
+                    let ucofferprice = productData.price - productData.price * (productData.productoffer/100);
+                    ucofferprice = parseInt(ucofferprice.toFixed(0))
+                    productData.offerprice = ucofferprice;
+                }
+                await db.get().collection(collections.PRODUCT_COLLECTION).updateOne({_id:ObjectID(id)}, {
+                    $set:{
+                        totalOffer: productData.totalOffer,
+                        offerprice: productData.offerprice
+                    }
+                })
+            }
             db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectID(id)}).then((response) => {
                 resolve(response)
             })
@@ -63,16 +102,32 @@ module.exports ={
             productData.productoffer = parseInt(productData.productoffer)
             let p = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectID(id)});
             if(productData.productoffer > 0) {
-                let offerprice;
                 if(p.productoffer == productData.productoffer) {
-                    offerprice = parseInt(p.offerprice.toFixed(0))
+                    productData.offerprice = p.offerprice
+                    productData.totalOffer = p.totalOffer
+                    // offerprice = parseInt(p.offerprice.toFixed(0))
                 } else {
-                    offerprice = p.price - (p.price*(productData.productoffer/100))
-                    offerprice = parseInt(offerprice.toFixed(0))
+                    // offerprice = p.price - (p.price*(productData.productoffer/100))
+                    // offerprice = parseInt(offerprice.toFixed(0))
+                    let pofferprice = p.price * (p.productoffer/100);   //currentofferprice
+                    console.log(pofferprice);
+                    let uofferprice = p.offerprice + pofferprice;   //updatedofferprice
+                    let npofferprice = p.price * (productData.productoffer/100);  //newofferprice
+                    productData.offerprice = parseInt(parseInt(uofferprice - npofferprice).toFixed(0));
+
+                    let ctotalOffer = p.totalOffer - parseInt(p.productoffer);
+                    ctotalOffer = ctotalOffer + parseInt(productData.productoffer);
+                    productData.totalOffer = ctotalOffer
                 }
-                productData.offerprice = offerprice;
+                // productData.offerprice = offerprice;
             } else {
-                productData.offerprice = p.price;
+                let pofferprice = p.price * (p.productoffer/100);   //currentofferprice
+                console.log(pofferprice);
+                let uofferprice = p.offerprice + pofferprice;   //updatedofferprice
+                uofferprice = parseInt(uofferprice.toFixed(0));
+                productData.offerprice = uofferprice;
+                let ctotalOffer = p.totalOffer - parseInt(p.productoffer);
+                productData.totalOffer = ctotalOffer
             }
 
             let productId = productData.product_name+productData.brand_name+productData.category+productData.size+productData.color.trim()
@@ -98,7 +153,8 @@ module.exports ={
                         img_url3: productData.img_url3,
                         img_url4: productData.img_url4,
                         productoffer: productData.productoffer,
-                        offerprice: productData.offerprice
+                        offerprice: productData.offerprice,
+                        totalOffer: productData.totalOffer
                     }
                 }).then((response) => {
                     console.log(response)
@@ -133,17 +189,58 @@ module.exports ={
     getSizesOfProduct: function(commonId) {
         return new Promise(async function(resolve, reject){
             console.log(commonId);
-            let sizes = await db.get().collection(collections.PRODUCT_COLLECTION).find({commonId: commonId}).project({size:1, _id:0}).toArray();
+            let sizes = await db.get().collection(collections.PRODUCT_COLLECTION).find({commonId: commonId}).project({size:1, _id:1}).toArray();
             
             let uniqueSize = [...sizes.reduce((map, obj) => map.set(obj.size, obj), new Map()).values()];
             uniqueSize = uniqueSize.sort();
+            console.log(uniqueSize);
             resolve(uniqueSize)
         })
     },
 
     getAllUniqueProducts: function(){
         return new Promise(async function(resolve, reject){
-            db.get().collection(collections.PRODUCT_COLLECTION).find()
+            db.get().collection(collections.PRODUCT_COLLECTION).find({blocked: false}).toArray().then((res) => {
+                console.log(res);
+                res.forEach((element, i, a) => {
+                    res.forEach((item, index, arr) => {
+                        if(item.commonId == element.commonId && index != i) {
+                            console.log(true)
+                            arr.splice(index, 1);
+                        }
+                    });
+                });
+                resolve(res)
+            })
+        })
+    },
+
+    getAllProductsByBrand: function(brand_name) {
+        return new Promise(async function(resolve, reject) {
+            db.get().collection(collections.PRODUCT_COLLECTION).find({brand_name: brand_name}).toArray().then((res) => {
+
+                resolve(res)
+            })
+        })
+    },
+
+    getAllProductsByBrand_Category:async function(catid) {
+        let catDetails = await db.get().collection(collections.CATEGORIES_COLLECTION).findOne({categoryId: catid});
+        console.log(catDetails);
+        return new Promise(function(resolve, reject) {
+            db.get().collection(collections.PRODUCT_COLLECTION).find({brand_name: catDetails.brand, category: catDetails.categoryname}).toArray().then((res) => {
+                let obj = {
+                    products: res,
+                    currentBrand: catDetails.brand
+                }
+                resolve(obj)
+            })
+        })
+    },
+
+    getFourLatesProduct: async function() {
+        return new Promise(function(resolve, reject) {
+            
         })
     }
 }

@@ -35,6 +35,7 @@
 	<center><h3 class="mt-5 pt-5" style="text-decoration: underline;">Orders</h3></center>
 
 	<!-- Shoping Cart -->
+{{#if orders}}
     {{#each orders}}
 	<form class="bg0 p-t-75 p-b-85">
 		<div class="container">
@@ -57,7 +58,7 @@
 										</div>
 									</td>
 									<td class="column-2">{{this.product.product_name}}</td>
-									<td class="column-3">$ {{this.product.price}}</td>
+									<td class="column-3">$ {{this.product.offerprice}}</td>
 									<td class="column-4">
 										<div class="wrap-num-productnoborder flex-w m-l-auto m-r-0">
 											<div class="btn-num-product-down"></div>
@@ -81,6 +82,20 @@
 
 				<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
 					<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+
+						<div class="flex-w flex-t p-t-27 p-b-33">
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Order Id:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span class="mtext-10 cl2" id="carttotal">
+									{{this._id}}
+								</span>
+							</div>
+						</div>
 						<h4 class="mtext-109 cl2 p-b-30">
 							Cart Totals
 						</h4>
@@ -90,20 +105,43 @@
 						<div class="flex-w flex-t p-t-27 p-b-33">
 							<div class="size-208">
 								<span class="mtext-101 cl2">
-									Order Id:
+									Total:
 								</span>
 							</div>
 
 							<div class="size-209 p-t-1">
-								<span class="mtext-10 cl2" id="total">
-									{{this._id}}
+								<span>$ </span>
+								<span class="mtext-110 cl2" id="orgprice">
+									{{this.orgPrice}}
 								</span>
 							</div>
-						</div>
-						<div class="flex-w flex-t p-t-27 p-b-33">
 							<div class="size-208">
 								<span class="mtext-101 cl2">
-									Total:
+									Offer:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span>- </span>
+								<span class="mtext-110 cl2" id="offertotal">
+									{{this.offertotal}}
+								</span>
+							</div>
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Coupon:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span>- </span>
+								<span class="mtext-110 cl2" id="coupDisc">
+									{{this.coupDisc}}
+								</span>
+							</div>
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Sub Total:
 								</span>
 							</div>
 
@@ -138,6 +176,10 @@
 		</div>
 	</form>
     {{/each}}
+	{{else}}
+	<center>No orders yet</center>
+	<center><a href="/products">Shop Now</a></center>
+	{{/if}}
 		
 	
 		

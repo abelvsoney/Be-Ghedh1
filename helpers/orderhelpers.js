@@ -10,8 +10,9 @@ var instance = new Razorpay({
 })
 
 module.exports = {
-    placeOrder:async function(userId, order, products, totalPrice) {
+    placeOrder:async function(userId, order, products, totalPrice, orgPrice, offertotal, coupDisc) {
         order.userId  = userId;
+        orgPrice = parseInt(orgPrice)
         console.log(order,"products", products, totalPrice);
         return new Promise(async function(resolve, reject) {
             let status = order.paymentmethod === 'COD'?'placed':'pending'
@@ -22,7 +23,10 @@ module.exports = {
                 products: products,
                 totalAmount: totalPrice,
                 status: status,
-                date: new Date()
+                date: new Date(),
+                orgPrice: orgPrice,
+                offertotal: offertotal,
+                coupDisc: coupDisc,
             };
 
             db.get().collection(collections.ORDER_COLLECTION).insertOne(orderObj).then(async (response) => {
@@ -30,6 +34,7 @@ module.exports = {
                     console.log(element,"products")
                     console.log();
                     let product = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id: element.item});
+                    console.log(product);
                     let pquantity = Number(product.quantity);
                     pquantity = pquantity - element.quantity
                     await db.get().collection(collections.PRODUCT_COLLECTION).updateOne({_id: element.item}, {
@@ -59,6 +64,9 @@ module.exports = {
                         item:'$products.item',
                         quantity:'$products.quantity',
                         totalAmount:1,
+                        orgPrice:1,
+                        offertotal:1,
+                        coupDisc:1,
                         status: 1
                     }
                 },
@@ -73,6 +81,9 @@ module.exports = {
                 {
                     $project:{
                         totalAmount:1,
+                        orgPrice:1,
+                        offertotal:1,
+                        coupDisc:1,
                         status: 1,
                         item:1,
                         quantity:1,
@@ -80,6 +91,7 @@ module.exports = {
                     }
                 }
             ]).toArray()
+            orders.reverse();
 
             let orderIds = await db.get().collection(collections.ORDER_COLLECTION).find({userId: ObjectId(userId)}).project({_id:1}).toArray()
             // console.log("\n",orderIds,"\n");

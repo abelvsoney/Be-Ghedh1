@@ -47,12 +47,12 @@
 				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
 			</a>
 
-			<a href="product.html" class="stext-109 cl8 hov-cl1 trans-04">
+			<a href="/filterbybrand?bname={{product.brand_name}}" class="stext-109 cl8 hov-cl1 trans-04">
 				{{product.brand_name}}
 				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
 			</a>
 			
-			<a href="product.html" class="stext-109 cl8 hov-cl1 trans-04">
+			<a href="#" class="stext-109 cl8 hov-cl1 trans-04">
 				{{product.category}}
 				<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
 			</a>
@@ -117,7 +117,7 @@
                         <span class="stext-105" style="display: inline;">
                             <span style="text-decoration: line-through; color: #666">₹{{product.price}}</span>
                             <span style="color: red;">₹{{product.offerprice}}</span>
-                            <span style="color: red;" class="mx-3">{{product.productoffer}}% off</span>
+                            <span style="color: red;" class="mx-3">{{product.totalOffer}}% off</span>
                         </span>
                         {{else}}
                         <span class="mtext-106 cl2">
@@ -138,36 +138,41 @@
 
 								<div class="size-204 respon6-next">
 									<div class="rs1-select2 bor8 bg0">
-										<select class="js-select2" name="time" required>
-											<option value="" selected disabled hidden>Choose A Size</option>
-											{{!-- {{#each sizes}} --}}
-											<option>{{product.size}}</option>
-											{{!-- {{/each}} --}}
+										<select class="js-select2" onchange="location = this.value" required>
+											<option value="" disabled hidden>Choose A Size</option>
+											<option value="#" selected>{{product.size}}</option>
+											{{#each sizes}}
+											<option value="/viewproduct?id={{this._id}}">{{this.size}}</option>
+											{{/each}}
 										</select>
 										<div class="dropDownSelect2"></div>
 									</div>
 								</div>
 							</div>
 
-							{{!-- <div class="flex-w flex-r-m p-b-10">
+							<div class="flex-w flex-r-m p-b-10">
 								<div class="size-203 flex-c-m respon6">
 									Color
 								</div>
 
 								<div class="size-204 respon6-next">
 									<div class="rs1-select2 bor8 bg0">
-										<select class="js-select2" name="time">
-											<option>Choose an option</option>
-											<option>Red</option>
-											<option>Blue</option>
-											<option>White</option>
-											<option>Grey</option>
+										<select class="js-select2" name="time" disabled>
+											<option>{{product.color}}</option>
 										</select>
 										<div class="dropDownSelect2"></div>
 									</div>
 								</div>
-							</div> --}}
-
+							</div>
+                            {{#if product.outofstock}}
+                            <div class="flex-w flex-r-m p-b-10">
+								<div class="size-204 flex-w flex-m respon6-next">
+									<p>Out of Stock</p>
+									
+								</div>
+							</div>
+                            
+                            {{else}}
 							<div class="flex-w flex-r-m p-b-10">
 								<div class="size-204 flex-w flex-m respon6-next">
 									{{!-- <a href="/addtocart?id={{product._id}}"> --}}
@@ -177,20 +182,19 @@
 									{{!-- </a> --}}
 									
 								</div>
-							</div>	
+							</div>
+                            {{/if}}	
 						</div>
 
 						<!--  -->
 						<div class="flex-w flex-m p-l-100 p-t-40 respon7">
-							<div class="flex-m bor9 p-r-10 m-r-11">
-                                <button onclick="addToWishlist('{{product._id}}')" type="button">
-                                    <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
-                                        data-tooltip="Add to Wishlist">
-                                        <i class="zmdi zmdi-favorite"></i>
-                                    </a>
-                                </button>
-								
-							</div>
+                            <div class="flex-m bor9 p-r-10 m-r-11">
+                                <a onclick="addToWishlist('{{product._id}}')" href="#"
+                                    class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100"
+                                    data-tooltip="Add to Wishlist">
+                                    <i class="zmdi zmdi-favorite"></i>
+                                </a>
+                            </div>
 
 							<a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
 								<i class="fa fa-facebook"></i>

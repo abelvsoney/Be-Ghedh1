@@ -14,17 +14,31 @@
 
 
 <div class="w3-container">
-  <div class="col-sm-6">
-      <div class="bg-light text-center rounded p-4">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-          <h6 class="mb-0">Sales</h6>
-
-        </div>
-        <canvas id="myChart1"></canvas>
-      </div>
-    </div>
-
-</div>
+  {{!-- <div class="col-sm-12"> --}}
+                        <div class="bg-light text-center rounded p-4 col-sm-6 mx-auto">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Weekly Sales</h6>
+                            </div>
+                            <canvas id="weeklysales"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-light text-center rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Monthly Sales</h6>
+                            </div>
+                            <canvas id="monthlysales"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-light text-center rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Yearly Sales</h6>
+                            </div>
+                            <canvas id="yearlySales"></canvas>
+                        </div>
+                    </div>
+{{!-- </div> --}}
    
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -91,7 +105,7 @@ function w3_close() {
 </script> --}}
 {{!-- <canvas id="myChart1" width="400" height="300"></canvas> --}}
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script>
+{{!-- <script>
     function getChart() {
         console.log("hiii")
         $.ajax({
@@ -149,64 +163,161 @@ function w3_close() {
     }
     
     
+</script> --}}
+{{!-- <script src="../../public/javascripts/chartmin.js"></script> --}}
+<script>
+    let  weekly = [0,0,0,0,0,0,0]
+       let yearName = []
+       let  yearly = []
+       let weekName = ["Sunday","Monday","Tuesday","WednesDay","Thursday","Friday","Saturday"]
+       let monthName = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+       let monthlyProfit = [0,0,0,0,0,0,0,0,0,0,0,0]
+      $.ajax({
+      type: "get",
+      url: "/admin/day",  
+      success: (data)=>{
+            for(i=0;i<data.data.weeklySales.length;++i){
+                
+                switch(data.data.weeklySales[i].date){
+                    
+                    case 1: 
+                            weekly[0] = data.data.weeklySales[i].total
+                            break;
+                    case 2: 
+                            weekly[1] = data.data.weeklySales[i].total
+                            break;
+                    case 3: 
+                            weekly[2] = data.data.weeklySales[i].total
+                            break;
+                    case 4: 
+                            weekly[3] = data.data.weeklySales[i].total
+                            break;
+                    case 5:
+                            weekly[4] = data.data.weeklySales[i].total
+                            break;
+                    case 6: 
+                            weekly[5] = data.data.weeklySales[i].total
+                            break;
+                    case 7: weekly[6] = data.data.weeklySales[i].total
+                            break;
+                }
+            }
+            for(i=0;i<data.data.monthlySales.length;++i){
+                
+                switch(data.data.monthlySales[i].month){                    
+                    case 1: 
+                            monthlyProfit[0] = data.data.monthlySales[i].total
+                            break;
+                    case 2: 
+                            monthlyProfit[1] = data.data.monthlySales[i].total
+                            break;
+                    case 3: 
+                            monthlyProfit[2] = data.data.monthlySales[i].total
+                            break;
+                    case 4: 
+                            monthlyProfit[3] = data.data.monthlySales[i].total
+                            break;
+                    case 5:
+                            monthlyProfit[4] = data.data.monthlySales[i].total
+                            break;
+                    case 6: 
+                            monthlyProfit[5] = data.data.monthlySales[i].total
+                            break;
+                    case 7: 
+                            monthlyProfit[6] = data.data.monthlySales[i].total
+                            break;
+                    case 8: 
+                            monthlyProfit[7] = data.data.monthlySales[i].total
+                            break;
+                    case 9: 
+                            monthlyProfit[8] = data.data.monthlySales[i].total
+                            break;
+                    case 10: 
+                            monthlyProfit[9] = data.data.monthlySales[i].total
+                            break;
+                    case 11:
+                            monthlyProfit[10] = data.data.monthlySales[i].total
+                            break;
+                    case 12: 
+                            monthlyProfit[11] = data.data.monthlySales[i].total
+                            break;
+                }
+            }
+            for(i=0;i<data.data.yearlySales.length;++i){
+                 yearName.push(data.data.yearlySales[i].year)                     
+                 yearly.push(data.data.yearlySales[i].total)                     
+                }
+            const yearlysales = new Chart(
+            document.getElementById('yearlySales'),
+            yearlyconfig
+            );
+            const weeklysales = new Chart(
+            document.getElementById('weeklysales'),
+            config
+            );
+            const monthlysales = new Chart(
+            document.getElementById('monthlysales'),
+            yeralyconfig
+    );
+      }
+});
+//weekly sales
+
+        const labels = weekName;
+      
+        const data = {
+          labels: labels,
+          datasets: [{
+            label: 'Weekly sales',
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+            data: weekly,
+          }]
+        };
+      
+        const config = {
+          type: 'bar',
+          data: data,
+          options: {}
+        };
+//monthly Sales
+        const months = monthName;
+      
+        const data1 = {
+          labels: months,
+          datasets: [{
+            label: 'Monthly sales',
+            backgroundColor: "red",
+            borderColor: 'red',
+            data: monthlyProfit,
+          }]
+        };
+      
+        const yeralyconfig = {
+          type: 'bar',
+          data: data1,
+          options: {}
+        };
+//yearly sales
+        const yearlyLabel = yearName;
+      
+        const data2 = {
+          labels: yearlyLabel,
+          datasets: [{
+            label: 'Yearly sales',
+            backgroundColor: 'green',
+            borderColor: 'green',
+            data: yearly,
+          }]
+        };
+      
+        const yearlyconfig = {
+          type: 'bar',
+          data: data2,
+          options: {}
+        };
 </script>
-<script src="../../public/javascripts/chartmin.js"></script>
      
 </body>
 </html>
 
-
-{{!-- 
-<div class="col-md-12 my-4">
-    <div class="bg-white">
-        <div class="card-body" style="text-align:center;">
-            <table class="container table" id="table" hidden>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Payment ID</th>
-                        <th>Order ID</th>
-                        <th>Ordered At</th>
-                        <th>Amount Paid</th>
-                        <th>Payment Method</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each order}}
-                    <tr>
-                        <td>{{ i.user.name }}</td>
-                        <td>{{i.payment_id}}</td>
-                        <td>{{i.order_id}}</td>
-                        <td>{{i.created_at}}</td>
-                        <td>{{i.amount_paid}}</td>
-                        <td>{{i.payment_method}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>  
-                                                 
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
-<script>
-    $(function () {
-        $('#table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'csv', 'excel', 'pdf', 'print'
-            ],
-            "ordering": false
-        });
-    });
-</script>
-<script>
-    const element = document.getElementById("table_filter");
-    element.style.visibility = "hidden";
-</script> --}}

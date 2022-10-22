@@ -14,7 +14,7 @@ var adminRouter = require('./routes/admin');
 var usersRouter = require('./routes/users');
 var db=require('./database/connection');
 
-var app = express();
+const app = express();
 app.use(fileupload());
 
 Handlebars.registerHelper("inc", function(value, options)
@@ -34,6 +34,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: true }
 }))
+// app.use(bodyparser())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -41,6 +42,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, "views")));
 const nocache = require('nocache');
+// const bodyParser = require('body-parser');
 app.use(nocache());
 
 db.connect(function(err) {

@@ -151,7 +151,7 @@ module.exports = {
         })
     },
 
-    getTotalAmount(userId) {
+    getTotalAmount: (userId) => {
         return new Promise (async function (resolve, reject) {
             let total = await db.get().collection(collections.CART_COLLECTION).aggregate([
                 {
@@ -184,7 +184,7 @@ module.exports = {
                 {
                     $group:{
                         _id:null,
-                        total:{$sum:{$multiply:['$quantity',{$toInt:'$product.offerprice'},'$product.categoryOffer']}}
+                        total:{$sum:{$multiply:['$quantity',{$toInt:'$product.price'}]}}
                     }
                 }
 
@@ -193,17 +193,90 @@ module.exports = {
 
             console.log(total);
             if(total.length == 0){
+                console.log("1");
                 resolve(0)
             } else {
+                console.log("2");
                 let ftotal = total[0].total
-                let cart = await db.get().collection(collections.CART_COLLECTION).findOne({ userId: ObjectId(userId) })
-                if (cart.coupon_code) {
-                    let coupon = await db.get().collection(collections.COUPON_COLLECTION).findOne({ coupon_code: cart.coupon_code })
-                    ftotal = ftotal - ftotal * (coupon.discount / 100)
-                }
                 console.log("hereeee");
                 ftotal = ftotal.toFixed(0)
+                console.log(ftotal);
                 resolve(ftotal)
+            }
+            
+        })
+    },
+
+    getTotalOfferAmount: (userId) => {
+        return new Promise (async function (resolve, reject) {
+            let total = await db.get().collection(collections.CART_COLLECTION).aggregate([
+                {
+                    $match:{userId: ObjectId(userId)}
+                },
+                {
+                    $unwind:'$products'
+                },
+                {
+                    $project:{
+                        item:'$products.item',
+                        quantity:'$products.quantity'
+                    }
+                },
+                {
+                    $lookup:{
+                        from:collections.PRODUCT_COLLECTION,
+                        localField: 'item',
+                        foreignField:'_id',
+                        as: 'product'
+                    }
+                },
+                {
+                    $project:{
+                        item:1,
+                        quantity:1,
+                        product: {$arrayElemAt:['$product',0]}
+                    }
+                },
+                {
+                    $group:{
+                        _id:null,
+                        total:{$sum:{$multiply:['$quantity',{$toInt:'$product.offerprice'}]}}
+                    }
+                }
+
+
+            ]).toArray()
+
+            console.log(total);
+            if(total.length == 0){
+                console.log("1");
+                resolve(0)
+            } else {
+                console.log("2");
+                let ftotal = total[0].total
+                console.log("hereeee");
+                ftotal = ftotal.toFixed(0)
+                console.log(ftotal);
+                resolve(ftotal)
+            }
+            
+        })
+    },
+
+    getCouponDiscount:async function(userId, ftotal) {
+        return new Promise(async function (resolve, reject) {
+            let cart = await db.get().collection(collections.CART_COLLECTION).findOne({ userId: ObjectId(userId) })
+            if(cart) {
+                if (cart.coupon_code) {
+                    let coupon = await db.get().collection(collections.COUPON_COLLECTION).findOne({ coupon_code: cart.coupon_code })
+                    ftotal = ftotal * (coupon.discount / 100);
+                    ftotal = parseInt(ftotal.toFixed(0))
+                    resolve(ftotal)
+                } else {
+                    resolve(0)
+                }
+            } else {
+                resolve(0)
             }
             
         })
@@ -225,11 +298,16 @@ module.exports = {
     isCoupon_Applied:async function(userId) {
         return new Promise(async function(resolve, reject) {
             let cart = await db.get().collection(collections.CART_COLLECTION).findOne({userId: ObjectId(userId)});
-            if(cart.coupon_code) {
-                resolve(true)
+            if(cart) {
+                if(cart.coupon_code) {
+                    resolve(cart.coupon_code)
+                } else {
+                    resolve(false)
+                }
             } else {
                 resolve(false)
             }
+            
         })
     }
 }

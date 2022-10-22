@@ -48,8 +48,8 @@ module.exports = {
                     offer: offer.categoryoffer
                 }
             }).then((response) => {
-                offerprice = offerprice/100;
-                offerprice = 1-offerprice;
+                // offerprice = offerprice/100;
+                // offerprice = 1-offerprice;
                 db.get().collection(collections.PRODUCT_COLLECTION).updateMany({category: response.value.categoryname, brand_name:response.value.brand},{
                     $set:{
                         categoryOffer: offerprice
@@ -79,7 +79,7 @@ module.exports = {
             }).then((response) => {
                 db.get().collection(collections.PRODUCT_COLLECTION).updateMany({category: response.value.categoryname, brand_name:response.value.brand},{
                     $set:{
-                        categoryOffer: 1
+                        categoryOffer: 0
                     }
                 }).then(() => {
                     resolve()

@@ -108,6 +108,16 @@ router.get('/deletecoupon', admincontrollers.getDeleteCoupon)
 
 router.get('/editcoupon', admincontrollers.getEditCoupon)
 
-router.post('/editcoupon', admincontrollers.postEditCoupon)
+router.post('/editcoupon', admincontrollers.postEditCoupon);
+
+router.get('/salesreport', admincontrollers.getSalesReport);
+
+router.get('/test', function(req, res) {
+    res.render('admin/trialupload', {admin: true})
+});
+
+router.post('/test', function(req, res) {
+    console.log(req.files)
+})
 
 module.exports = router;

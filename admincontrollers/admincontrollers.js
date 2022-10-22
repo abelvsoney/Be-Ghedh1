@@ -35,13 +35,9 @@ const couponhelpers = require('../helpers/couponhelpers');
 module.exports = {
     //admin dashboard
     getDasboard:function(req, res) {
-        charthelpers.findOrdersByDay().then((data) => {
             orderhelpers.getAllOrders().then((order) => {
-                res.render('admin/dashboard',{admin:req.cookies.admintoken, dashboard:true, data, order});
+                res.render('admin/dashboard',{admin:req.cookies.admintoken, dashboard:true, order});
             })
-            
-        })
-        
     },
 
     // login and logout
@@ -245,6 +241,19 @@ module.exports = {
     getViewOrders: function(req, res) {
         orderhelpers.getAllOrders().then((orders) => {
             orders.forEach(order => {
+
+                var d = new Date(order.date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                order.date = [year, month, day].join('-');
+
                 if(order.status == "Cancelled") {
                     order.cancelled = true
                 } else if (order.status == "pending") {
@@ -296,10 +305,9 @@ module.exports = {
         })
     },
 
-    getDay: function(req, res) {
-        charthelpers.findOrdersByDay().then((data) => {
-            console.log("data\n",data)
-            res.json(data)
+    getDay:async function(req, res) {
+        await charthelpers.graphdata().then((data) => {
+            res.json({ data })
         })
     },
 
@@ -353,5 +361,23 @@ module.exports = {
         couponhelpers.editCoupon(req.query.id, req.body).then(() => {
             res.redirect('/admin/viewcoupons')
         })
+    },
+
+    getSalesReport: async function(req, res) {
+        let order = await orderhelpers.getAllOrders()
+        order.forEach(order => {
+            var d = new Date(order.date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                order.date = [year, month, day].join('-');
+        });
+        res.render('admin/salesreport',{admin: true, salesreport: true, order})
     }
 }
