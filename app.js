@@ -1,21 +1,24 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('express-handlebars');
 const Handlebars = require('handlebars')
-var fileupload = require("express-fileupload");
+
 var bodyparser = require('body-parser')
 var session = require('express-session')
+
+
 
 
 var adminRouter = require('./routes/admin');
 var usersRouter = require('./routes/users');
 var db=require('./database/connection');
 
+
 const app = express();
-app.use(fileupload());
 
 Handlebars.registerHelper("inc", function(value, options)
 {
@@ -41,6 +44,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, "views")));
+
 const nocache = require('nocache');
 // const bodyParser = require('body-parser');
 app.use(nocache());

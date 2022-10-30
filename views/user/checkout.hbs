@@ -58,7 +58,7 @@
 								<tr class="table_row">
 									<td class="column-1">
 										<div class="how-itemcart-nodesign">
-												<img src="{{this.product.img_url1}}" alt="IMG">
+												<img src="ImageSite/{{this.product._id}}1.png" alt="IMG">
 										</div>
 									</td>
 									<td class="column-2">{{this.product.product_name}}</td>
@@ -166,7 +166,7 @@
 							</div>
 						</div>
 						<a href="/checkout">
-							<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+							<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer btn clr"
 								type="submit" id="co">
 								Place Order
 							</button>
@@ -346,7 +346,7 @@
 				method:'post',
 				data:$('#checkout-form').serialize(),
 				success:(response) => {
-					alert(response)
+					//alert(response)
 					if(response.status === true) {
 						location.href='/vieworders'
 					} else if(response == "paypal"){
@@ -369,9 +369,9 @@
     "image": "https://example.com/your_logo",
     "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 	"handler": function (res){
-    alert(res.razorpay_payment_id);
-    alert(res.razorpay_order_id);
-    alert(res.razorpay_signature)
+    //alert(res.razorpay_payment_id);
+    //alert(res.razorpay_order_id);
+    //alert(res.razorpay_signature)
 	
 	verifyPayment(res, order)
 	},

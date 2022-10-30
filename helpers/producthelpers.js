@@ -65,23 +65,23 @@ module.exports ={
         return new Promise (async function (resolve, reject){
             let productData = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectID(id)});
             console.log(productData)
-            let coffer = productData.totalOffer - productData.productoffer;
+            let coffer = parseInt(productData.totalOffer - productData.productoffer);
             if(coffer != productData.categoryOffer) {
                 if(productData.categoryOffer > 0) {
-                    let off = productData.totalOffer - coffer;
-                    off = off + productData.categoryOffer;
-                    productData.totalOffer = off;
+                    let off = parseInt(productData.totalOffer - coffer);
+                    off = parseInt(off + productData.categoryOffer);
+                    productData.totalOffer = parseInt(off);
 
-                    let catOffprice = (coffer/100) * productData.price;
-                    let ucofferprice = productData.price + catOffprice;
-                    let offp = off/100 * productData.price;
+                    let catOffprice = parseInt((coffer/100) * productData.price);
+                    let ucofferprice = parseInt(productData.price + catOffprice);
+                    let offp = parseInt(off/100 * productData.price);
                     offp = parseInt(offp.toFixed(0))
-                    productData.offerprice = ucofferprice - offp;
+                    productData.offerprice = (parseInt);
                 } else {
-                    productData.totalOffer = productData.productoffer;
-                    let ucofferprice = productData.price - productData.price * (productData.productoffer/100);
+                    productData.totalOffer = parseInt(productData.productoffer);
+                    let ucofferprice = parseInt(productData.price - productData.price * (productData.productoffer/100));
                     ucofferprice = parseInt(ucofferprice.toFixed(0))
-                    productData.offerprice = ucofferprice;
+                    productData.offerprice = parseInt(ucofferprice);
                 }
                 await db.get().collection(collections.PRODUCT_COLLECTION).updateOne({_id:ObjectID(id)}, {
                     $set:{
@@ -148,17 +148,13 @@ module.exports ={
                         category: productData.category,
                         color: productData.color,
                         size: productData.size,
-                        img_url1: productData.img_url1,
-                        img_url3: productData.img_url2,
-                        img_url3: productData.img_url3,
-                        img_url4: productData.img_url4,
                         productoffer: productData.productoffer,
                         offerprice: productData.offerprice,
                         totalOffer: productData.totalOffer
                     }
                 }).then((response) => {
-                    console.log(response)
-                    resolve(response)
+                    console.log(id)
+                    resolve(id)
                 })          
         })
     },

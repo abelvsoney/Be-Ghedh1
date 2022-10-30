@@ -117,7 +117,16 @@ router.get('/test', function(req, res) {
 });
 
 router.post('/test', function(req, res) {
-    console.log(req.files)
+    console.log(req.files.sampleFile)
+    let image1 = req.files.sampleFile
+    let n = Math.random(0,10)
+    image1.mv('./public/ImageSite/'+n+".jpg", (err, done) => {
+        if(!err) {
+            res.send("success")
+        } else {
+            console.log(err)
+        }
+    })
 })
 
 module.exports = router;

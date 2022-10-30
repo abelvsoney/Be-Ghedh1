@@ -3,7 +3,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const { CLIENT_ID, APP_SECRET } = process.env;
 const base = "https://api-m.sandbox.paypal.com";
 
-exports.createOrder = async function () {
+exports.createOrder = async function (amount) {
   // let totalPrice= await userHelpers.getTotalAmount(req.body.userId)
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders`;
@@ -19,7 +19,7 @@ exports.createOrder = async function () {
         {
           amount: {
             currency_code: "USD",
-            value:1000,
+            value:amount,
           },
         },
       ],

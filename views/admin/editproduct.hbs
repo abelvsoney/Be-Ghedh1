@@ -3,7 +3,7 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
-<form class="form-horizontal p-5" action="/admin/editproduct?id={{response._id}}" method="post">
+<form class="form-horizontal p-5" action="/admin/editproduct?id={{response._id}}" method="post" enctype="multipart/form-data">
 <fieldset>
 
 <center class="p-5"><h3 style="text-decoration: underline;">Edit Product</h3></center>
@@ -87,43 +87,31 @@
   </div>
 </div>  
 
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
-  <div class="col-md-4">
-  <input id="img_url1" name="img_url1" value="{{response.img_url1}}" placeholder="Image Url 1" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div> 
-
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
-  <div class="col-md-4">
-  <input id="img_url2" name="img_url2" value="{{response.img_url2}}" placeholder="Image Url 2" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div> 
-
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
-  <div class="col-md-4">
-  <input id="img_url3" name="img_url3" value="{{response.img_url3}}" placeholder="Image Url 3" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div> 
-
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url</label>  
-  <div class="col-md-4">
-  <input id="img_url4" name="img_url4" value="{{response.img_url4}}" placeholder="Image Url 4" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div> 
 
 <div class="form-group">
   <label class="col-md-4 control-label" for="productoffer">Product Offer</label>  
   <div class="col-md-4">
   <input id="productoffer" name="productoffer" value="{{response.productoffer}}" placeholder="Product Offer(%)" class="form-control input-md" type="number" max=100 min=0>
     
+  </div>
+</div> 
+
+ <div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">main_image</label>
+  <div class="col-md-4">
+    <input name="image1" class="" type="file">
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">auxiliary_images</label>
+  <div class="col-md-4">
+    <input name="image2" class="" type="file">
+  </div>
+</div> 
+<div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">auxiliary_images</label>
+  <div class="col-md-4">
+    <input name="image3" class="" type="file">
   </div>
 </div> 
 

@@ -3,6 +3,8 @@ var router = express.Router();
 var usercontrollers = require('../usercontrollers/usercontrollers')
 var userauthentication = require('../userauthentication/authentication');
 const admincontrollers = require('../admincontrollers/admincontrollers');
+var carthelpers = require('../helpers/carthelpers')
+var jwt = require('jsonwebtoken')
 const paypal = require('../helpers/paypal')
 
 
@@ -37,51 +39,58 @@ router.get('/viewproduct',userauthentication.isUnblocked, usercontrollers.getVie
 
 router.get('/cart', userauthentication.userJWTTokenAuth, usercontrollers.getCart)
 
-router.get('/myaddresses', usercontrollers.getMyAddresses)
+router.get('/myaddresses',userauthentication.userJWTTokenAuth, usercontrollers.getMyAddresses)
 
 router.get('/addaddress',userauthentication.userJWTTokenAuth, usercontrollers.getAddAddress);
 
-router.post('/addaddress', usercontrollers.postAddAddress);
+router.post('/addaddress',userauthentication.userJWTTokenAuth, usercontrollers.postAddAddress);
 
-router.get('/editaddress', usercontrollers.getEditAddress);
+router.get('/editaddress',userauthentication.userJWTTokenAuth, usercontrollers.getEditAddress);
 
-router.post('/editaddress', usercontrollers.postEditAddress)
+router.post('/editaddress',userauthentication.userJWTTokenAuth, usercontrollers.postEditAddress)
 
-router.get('/deleteaddress', usercontrollers.getDeleteAddress)
+router.get('/deleteaddress',userauthentication.userJWTTokenAuth, usercontrollers.getDeleteAddress)
 
-router.get('/addtocart/:id',usercontrollers.getAddtoCart);
+router.get('/addtocart/:id',userauthentication.userJWTTokenAuth, usercontrollers.getAddtoCart);
 
-router.get('/viewcart', usercontrollers.getViewCart);
+router.get('/viewcart',userauthentication.userJWTTokenAuth, usercontrollers.getViewCart);
 
-router.get('/deleteproductfromcart/:id', usercontrollers.getDeleteProductFromCart);
+router.get('/deleteproductfromcart/:id',userauthentication.userJWTTokenAuth, usercontrollers.getDeleteProductFromCart);
 
-router.post('/changeproductquantity', usercontrollers.postChangeProductQuantity);
+router.post('/changeproductquantity',userauthentication.userJWTTokenAuth, usercontrollers.postChangeProductQuantity);
 
-router.get('/checkout', usercontrollers.getCheckout);
+router.get('/checkout',userauthentication.userJWTTokenAuth, usercontrollers.getCheckout);
 
-router.post('/placeorder', usercontrollers.postPlaceOrder)
+router.post('/placeorder',userauthentication.userJWTTokenAuth, usercontrollers.postPlaceOrder)
 
-router.get('/ordersuccessful', usercontrollers.getOrderSuccessful);
+router.get('/ordersuccessful',userauthentication.userJWTTokenAuth, usercontrollers.getOrderSuccessful);
 
-router.get('/vieworders', usercontrollers.getVIewOrders);
+router.get('/vieworders',userauthentication.userJWTTokenAuth, usercontrollers.getVIewOrders);
 
-router.get('/cancelorder', usercontrollers.getCancelOrder);
+router.get('/cancelorder',userauthentication.userJWTTokenAuth, usercontrollers.getCancelOrder);
 
-router.get('/wishlist', usercontrollers.getViewWishlist);
+router.get('/wishlist',userauthentication.userJWTTokenAuth, usercontrollers.getViewWishlist);
 
-router.get('/addtowishlist/:proId', usercontrollers.getAddToWishlist);
+router.get('/addtowishlist/:proId',userauthentication.userJWTTokenAuth, usercontrollers.getAddToWishlist);
 
-router.get('/removefromwishlist', usercontrollers.getRemovefromWishlist);
+router.get('/removefromwishlist',userauthentication.userJWTTokenAuth, usercontrollers.getRemovefromWishlist);
 
-router.post('/verifypayment', usercontrollers.postVerifyPayment);
+router.post('/verifypayment',userauthentication.userJWTTokenAuth, usercontrollers.postVerifyPayment);
 
 //paypal
-router.post("/api/orders", async (req, res) => {
-    const order = await paypal.createOrder();
-    res.json(order);
-  });
+router.post("/api/orders", userauthentication.userJWTTokenAuth, async (req, res) => {
+  let token = req.cookies.token;
+  let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+  let offertotal = await carthelpers.getTotalOfferAmount(user._id)
+  let coupDisc = await carthelpers.getCouponDiscount(user._id, offertotal)
+  let total = await carthelpers.getTotalAmount(user._id);
+  offertotal = total - offertotal;
+  let subtotal = total - (offertotal + coupDisc)
+  const order = await paypal.createOrder(subtotal);
+  res.json(order);
+});
   
-  router.post("/api/orders/:orderId/capture", async (req, res) => {
+  router.post("/api/orders/:orderId/capture",userauthentication.userJWTTokenAuth, async (req, res) => {
     const { orderId } = req.params;
     const captureData = await paypal.capturePayment(orderId);
     res.json(captureData);
@@ -92,7 +101,7 @@ router.get('/changepasswordotpverification', usercontrollers.getChangePasswordOt
 
 router.post('/changepasswordotpverification', usercontrollers.postChangePasswordVerification)
 
-router.get('/changepassword', usercontrollers.getChangePassword);
+router.get('/changepassword',userauthentication.userJWTTokenAuth, usercontrollers.getChangePassword);
 
 router.post('/changepassword', usercontrollers.postChangePassword);
 
@@ -104,22 +113,22 @@ router.post('/forgotpasswordotp', usercontrollers.postForgotPasswordOtp);
 
 router.post('/forgotpasswordchange', usercontrollers.postForgotPasswordChange);
 
-router.get('/myprofile', usercontrollers.getMyProfile);
+router.get('/myprofile',userauthentication.userJWTTokenAuth, usercontrollers.getMyProfile);
 
-router.get('/editprofile', usercontrollers.getEditProfile);
+router.get('/editprofile',userauthentication.userJWTTokenAuth, usercontrollers.getEditProfile);
 
 router.post('/editprofile', usercontrollers.postEditProfile)
 
-router.post('/verifyandaddcoupon', usercontrollers.postVerifyAndAddCoupon);
+router.post('/verifyandaddcoupon',userauthentication.userJWTTokenAuth, usercontrollers.postVerifyAndAddCoupon);
 
-router.get('/changeorderstatus', usercontrollers.changeOrderStatus);
+router.get('/changeorderstatus',userauthentication.userJWTTokenAuth, usercontrollers.changeOrderStatus);
 
-router.get('/removecoupon', usercontrollers.getRemoveCoupon);
+router.get('/removecoupon',userauthentication.userJWTTokenAuth, usercontrollers.getRemoveCoupon);
 
 router.get('/filterbybrand', usercontrollers.getFilterByBrand)
 
 router.get('/filterbycategory', usercontrollers.getFilterByCategory);
 
-router.get('/')
+// router.get('/')
 
 module.exports = router;

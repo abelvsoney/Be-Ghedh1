@@ -64,7 +64,7 @@
     {{else if adminloginheader}}
 	{{> adminloginheader}}
 	{{else if user}}
-    {{> userfooter}}
+    {{!-- {{> userfooter}} --}}
     {{/if}}
 
     <!-- Optional JavaScript -->
@@ -172,10 +172,13 @@
 			url:'/addtocart/'+proId,
 			method:'get',
 			success: (response) => {
-				if(response.status) {
+				if(response.status ==  true) {
 					let count=$('#cart-count').html()
 					count = parseInt(count) + 1
 					$("#cart-count").html(count)
+				} else {
+					alert("Sign In First")
+					location.reload()
 				}
 			}
 		})
@@ -204,11 +207,11 @@
 			url:'/addtowishlist/'+productId,
 			method:'get',
 			success: (response) => {
-				if(response.status) {
-					//let count=$('#cart-count').html()
-					//count = parseInt(count) + 1
-					//$("#cart-count").html(count)
-                    //alert(response.status)
+				if(response.status ==  true) {
+
+				} else {
+					alert("Sign In First")
+					location.reload()
 				}
 			}
 		})

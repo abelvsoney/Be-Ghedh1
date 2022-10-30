@@ -5,6 +5,9 @@ const { ObjectId } = require('mongodb');
 module.exports = {
     addToWishlist: function(productId, userId) {
         return new Promise (async function(resolve, reject) {
+            if(userId.length < 1) {
+                resolve(false)
+            }
             let proObj = {
                 item : ObjectId(productId),
             }

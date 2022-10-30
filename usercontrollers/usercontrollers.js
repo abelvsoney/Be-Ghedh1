@@ -22,27 +22,27 @@ require('dotenv').config()
 module.exports={
 
     getHomePage: async function(req, res) {
+        let products = await producthelpers.getAllUniqueProducts();
+        products = products.slice(0,4)
+        products.forEach(element => {
+            if(element.price > element.offerprice){
+                element.offer = true
+            }
+        });
         let token = req.cookies.token;
         if(token){
             let user = jwt.verify(token, process.env.USER_SECRET_KEY)
             let cartCount = await carthelpers.getCartCount(user._id)
-            let products = await producthelpers.getAllUniqueProducts();
-            products = products.slice(0,4)
-            products.forEach(element => {
-                if(element.price > element.offerprice){
-                    element.offer = true
-                }
-            });
             carthelpers.getCartbyUserId(user._id).then((response) => {
                 console.log(response+'\n hiii');
                 bannerhelpers.getAllBanners().then((banners) => {
-                    res.render('050 cozastore-master/index', {user: req.cookies.token, cartCount, cartItems:response, banners, products})
+                    res.render('050 cozastore-master/index', {user: req.cookies.token, cartCount, cartItems:response, banners, products, home:true})
                 })
             
         })
         } else {
             bannerhelpers.getAllBanners().then((banners) => {
-                res.render('050 cozastore-master/index', {user: req.cookies.token, banners})
+                res.render('050 cozastore-master/index', {user: req.cookies.token, banners, products, home: true})
             })
         }
         
@@ -52,8 +52,11 @@ module.exports={
 
     getProducts:async function(req, res){
         let token = req.cookies.token;
-        let user = jwt.verify(token, process.env.USER_SECRET_KEY)
-        let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
+        if(token) {
+            let user = jwt.verify(token, process.env.USER_SECRET_KEY)
+            let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
+        }
+        
         let brands = await brandhelpers.getAllBrands()
         producthelpers.getAllUniqueProducts().then((response) => {
             let products = response;
@@ -62,7 +65,7 @@ module.exports={
                     element.offer = true
                 }
             });
-            res.render('050 cozastore-master/product',{user: req.cookies.token, products, brands})
+            res.render('050 cozastore-master/product',{user: req.cookies.token, products, brands, shop: true})
         })
         
     },
@@ -135,7 +138,17 @@ module.exports={
     },
 
     getViewProduct: async function(req, res) {
-        let cartCount = await carthelpers.getCartCount(req.user._id)
+        let p = await producthelpers.getAllUniqueProducts();
+        p = p.slice(0,4)
+        p.forEach(element => {
+            if(element.price > element.offerprice){
+                element.offer = true
+            }
+        });
+        let cartCount
+        if(req.user) {
+            cartCount = await carthelpers.getCartCount(req.user._id)
+        }
         producthelpers.getProductById(req.query.id).then((response) => {
             let product = response;
             console.log(product);
@@ -151,9 +164,13 @@ module.exports={
                         arr.splice(index, 1);
                     }
                 });
-                carthelpers.getCartbyUserId(req.user._id).then((cartItems) => {
-                    res.render('050 cozastore-master/product-detail',{user: req.cookies.token, product, sizes, cartCount, cartItems})
-                })
+                if(req.user){
+                    carthelpers.getCartbyUserId(req.user._id).then((cartItems) => {
+                        res.render('050 cozastore-master/product-detail',{user: req.cookies.token, product, sizes, cartCount, cartItems, p, shop: true})
+                    })
+                } else {
+                    res.render('050 cozastore-master/product-detail',{user: req.cookies.token, product, sizes, p, shop: true})
+                }
             })
         })
     },
@@ -386,7 +403,7 @@ module.exports={
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         console.log(req.params.proId)
         wishlisthelpers.addToWishlist(req.params.proId, user._id).then((response) => {
-            res.json({status:true})
+            res.json({status:response})
         })
     },
 

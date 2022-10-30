@@ -36,13 +36,24 @@
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
 						<ul class="main-menu">
+							{{#if home}}
 							<li class="active-menu">
 								<a href="/">Home</a>
 							</li>
-
+							{{else}}
+							<li>
+								<a href="/">Home</a>
+							</li>
+							{{/if}}
+							{{#if shop}}
+							<li class="active-menu">
+								<a href="/products">Shop</a>
+							</li>
+							{{else}}
 							<li>
 								<a href="/products">Shop</a>
 							</li>
+							{{/if}}
 							<li>
 								<a href="#">About</a>
 							</li>
@@ -108,19 +119,17 @@
 		<div class="wrap-header-mobile">
 			<!-- Logo moblie -->		
 			<div class="logo-mobile">
-				<a href="/"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+				<a href="/"><img src="images/icons/beghedh.png" alt="IMG-LOGO"></a>
 			</div>
 
 			<!-- Icon header -->
 			<div class="wrap-icon-header flex-w flex-r-m m-r-15">
-				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
-					<i class="zmdi zmdi-search"></i>
-				</div>
 
+				<a href="/viewcart">
 				<div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 js-show-cart">
 					<i class="zmdi zmdi-shopping-cart"></i>
 				</div>
-
+				</a>
 
 
 				<a href="/wishlist" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 ">
@@ -183,31 +192,30 @@
 			</ul>
 
 			<ul class="main-menu-m">
+				{{#if home}}
+				<li class="active-menu">
+					<a href="/">Home</a>
+				</li>
+				{{else}}
 				<li>
 					<a href="/">Home</a>
-					<span class="arrow-main-menu-m">
-						<i class="fa fa-angle-right" aria-hidden="true"></i>
-					</span>
 				</li>
-
-				<li>
-					<a href="product.html">Shop</a>
+				{{/if}}
+				{{#if shop}}
+				<li class="active-menu">
+					<a href="/products">Shop</a>
 				</li>
-
+				{{else}}
 				<li>
-					<a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+					<a href="/products">Shop</a>
 				</li>
-
+				{{/if}}
 				<li>
-					<a href="blog.html">Blog</a>
+					<a href="#">About</a>
 				</li>
-
+			
 				<li>
-					<a href="about.html">About</a>
-				</li>
-
-				<li>
-					<a href="contact.html">Contact</a>
+					<a href="#">Contact</a>
 				</li>
 			</ul>
 		</div>

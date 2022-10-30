@@ -75,30 +75,33 @@
 							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
 							<div class="slick3 gallery-lb">
-								<div class="item-slick3" data-thumb="{{product.img_url1}}">
+								<div class="item-slick3" data-thumb="ImageSite/{{product._id}}1.png">
 									<div class="wrap-pic-w pos-relative img-p" id="img-p">
 											<div class="big-image1">
-												<img src="{{product.img_url1}}" alt="IMG-PRODUCT" name="zooms" id="zoom">
+												<img src="ImageSite/{{product._id}}1.png" alt="IMG-PRODUCT" name="zooms" id="zoom">
 											</div>
+                                            <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="ImageSite/{{product._id}}1.png">
+                                                <i class="fa fa-expand"></i>
+                                            </a>
 
 									</div>
 								</div>
 
-								<div class="item-slick3" data-thumb="{{product.img_url2}}">
+								<div class="item-slick3" data-thumb="ImageSite/{{product._id}}2.png">
 									<div class="wrap-pic-w pos-relative img-p" id="img-p">
-										<img src="{{product.img_url2}}" alt="IMG-PRODUCT">
+										<img src="ImageSite/{{product._id}}2.png" alt="IMG-PRODUCT">
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{product.img_url1}}">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="ImageSite/{{product._id}}2.png">
 											<i class="fa fa-expand"></i>
 										</a>
 									</div>
 								</div>
 
-								<div class="item-slick3" data-thumb="{{product.img_url3}}">
+								<div class="item-slick3" data-thumb="ImageSite/{{product._id}}3.png">
 									<div class="wrap-pic-w pos-relative img-p" id="img-p">
-										<img src="{{product.img_url3}}" alt="IMG-PRODUCT">
+										<img src="ImageSite/{{product._id}}3.png" alt="IMG-PRODUCT">
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{{product.img_url1}}">
+										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="ImageSite/{{product._id}}3.png">
 											<i class="fa fa-expand"></i>
 										</a>
 									</div>
@@ -345,37 +348,42 @@
 			<!-- Slide2 -->
 			<div class="wrap-slick2">
 				<div class="slick2">
+                    {{#each p}}
 					<div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
 						<!-- Block2 -->
 						<div class="block2">
 							<div class="block2-pic hov-img0">
-								<img src="images/product-01.jpg" alt="IMG-PRODUCT">
+								<img src="ImageSite/{{this._id}}1.png" alt="IMG-PRODUCT">
 
-								<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+								<a href="/viewproduct?{{this._id}}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
 									Quick View
 								</a>
 							</div>
 
 							<div class="block2-txt flex-w flex-t p-t-14">
 								<div class="block2-txt-child1 flex-col-l ">
-									<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-										Esprit Ruffle Shirt
+									<a href="/viewproduct?{{this._id}}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+										{{this.product_name}}
 									</a>
 
-									<span class="stext-105 cl3">
-										$16.64
-									</span>
+									{{#if this.offer}}
+								<span class="stext-105" style="display: inline;">
+									<span style="text-decoration: line-through; color: #666">₹{{this.price}}</span>
+									<span style="color: red;">₹{{this.offerprice}}</span>
+									<span style="color: red;" class="mx-3">{{this.totalOffer}}% off</span>
+									
+								</span>
+								{{else}}
+								<span class="stext-105 cl3">
+									₹{{this.price}}
+								</span>
+								{{/if}}
 								</div>
 
-								<div class="block2-txt-child2 flex-r p-t-3">
-									<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-										<img class="icon-heart1 dis-block trans-04" src="images/icons/icon-heart-01.png" alt="ICON">
-										<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-									</a>
-								</div>
 							</div>
 						</div>
 					</div>
+                    {{/each}}
 
 					{{!-- <div class="item-slick2 p-l-15 p-r-15 p-t-15 p-b-15">
 						<!-- Block2 -->

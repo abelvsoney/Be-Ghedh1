@@ -3,7 +3,7 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
-<form class="form-horizontal p-5" action="/admin/addproductfinal" method="post">
+<form class="form-horizontal p-5" action="/admin/addproductfinal" method="post" encType="multipart/form-data">
 
 
 <center class="p-5"><h3 style="text-decoration: underline;">Add Product</h3></center>
@@ -87,57 +87,31 @@
   </div>
 </div>  
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url 1</label>  
-  <div class="col-md-4">
-  <input id="img_url1" name="img_url1" placeholder="Image Url" class="form-control input-md" required="" type="url">
-    
-  </div>
-</div> 
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url 2</label>  
-  <div class="col-md-4">
-  <input id="img_url2" name="img_url2" placeholder="Image Url" class="form-control input-md" required="" type="url">
-    
-  </div>
-</div> 
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url 3</label>  
-  <div class="col-md-4">
-  <input id="img_url3" name="img_url3" placeholder="Image Url" class="form-control input-md" required="" type="url">
-    
-  </div>
-</div> 
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="available_quantity">Image Url 4</label>  
-  <div class="col-md-4">
-  <input id="img_url4" name="img_url4" placeholder="Image Url" class="form-control input-md" required="" type="url">
-    
-  </div>
-</div> 
-
- {{!-- <!-- File Button --> 
  <div class="form-group">
   <label class="col-md-4 control-label" for="filebutton">main_image</label>
   <div class="col-md-4">
-    <input id="Image1" name="Image1" class="" type="file">
+    <input name="image1" class="" type="file">
   </div>
 </div>
-
-<!-- File Button --> 
 <div class="form-group">
   <label class="col-md-4 control-label" for="filebutton">auxiliary_images</label>
   <div class="col-md-4">
-    <input id="Image2" name="Image2" class="input-file" type="file">
+    <input name="image2" class="" type="file">
   </div>
-</div> --}}
+</div> 
+<div class="form-group">
+  <label class="col-md-4 control-label" for="filebutton">auxiliary_images</label>
+  <div class="col-md-4">
+    <input name="image3" class="" type="file">
+  </div>
+</div> 
+
+
+ {{!-- <!-- File Button --> 
+
+<!-- File Button --> 
+--}}
 
 <!-- Button -->
 <div class="form-group">

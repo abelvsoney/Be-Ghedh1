@@ -9,12 +9,12 @@ const brandhelpers = require('../helpers/brandhelpers')
 const categoryhelpers = require('../helpers/categoryhelpers')
 const producthelpers = require('../helpers/producthelpers')
 const emailotp = require('../userauthentication/emailotp')
-const fileUpload = require('express-fileupload');
+// const fileUpload = require('express-fileupload');
 const carthelpers = require('../helpers/carthelpers');
 const orderhelpers = require('../helpers/orderhelpers');
 const bannerhelpers = require('../helpers/bannerhelpers');
 const charthelpers = require('../helpers/charthelpers');
-router.use(fileUpload())
+
 // const multer = require('multer')
 require('dotenv').config()
 var chartjs = require('chart.js');
@@ -158,12 +158,24 @@ module.exports = {
 
     postAddProductFinal:function(req, res){
         console.log(req.body);
-        // console.log(req.files+"\nimage");
+        console.log(req.files.image1+"\nimage");
 
-        
+        let image1 = req.files?.image1
+        let image2 = req.files?.image2
+        let image3 = req.files?.image3
 
         producthelpers.addProduct(req.body).then((response) => {
             if(response) {
+                console.log(response);
+                let id = response.insertedId.toString()
+                console.log(id);
+                image1.mv("./public/ImageSite/"+id+"1.png", (err, done) => {
+                })
+                image2.mv("./public/ImageSite/"+id+"2.png", (err, done) => {
+                })
+                image3.mv("./public/ImageSite/"+id+"3.png", (err, done) => {
+                })
+
                 res.redirect('/admin/viewproducts')
             } else {
                 res.cookie("product-creation-error", "Product already exists")
@@ -179,6 +191,8 @@ module.exports = {
     },
 
     getEditProduct:function(req, res){
+
+
         producthelpers.getProductById(req.query.id).then((response) => {
             categoryhelpers.getCategorybyBrand(response.brand_name).then((category) => {
                 res.render('admin/editproduct',{admin:req.cookies.admintoken, response, category})
@@ -188,7 +202,26 @@ module.exports = {
     },
 
     postEditProduct:function(req, res){
-        producthelpers.updateProduct(req.query.id, req.body).then((response) => {
+
+        
+        let image1 = req.files?.image1
+        let image2 = req.files?.image2
+        let image3 = req.files?.image3
+
+        producthelpers.updateProduct(req.query.id, req.body).then((id) => {
+            if (image1) {
+                image1.mv("./public/ImageSite/" + id + "1.png", (err, done) => {
+                })
+            }
+            if(image2) {
+            image2.mv("./public/ImageSite/"+id+"2.png", (err, done) => {
+            })
+            }
+            if(image3) {
+            image3.mv("./public/ImageSite/"+id+"3.png", (err, done) => {
+            })
+            }
+
             res.redirect('/admin/viewproducts')
         })
     },
