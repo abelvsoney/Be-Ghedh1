@@ -64,7 +64,7 @@ module.exports ={
     getProductById:async function(id){
         return new Promise (async function (resolve, reject){
             let productData = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectID(id)});
-            console.log(productData)
+            // console.log(productData.totalOffer)
             let coffer = parseInt(productData.totalOffer - productData.productoffer);
             if(coffer != productData.categoryOffer) {
                 if(productData.categoryOffer > 0) {
