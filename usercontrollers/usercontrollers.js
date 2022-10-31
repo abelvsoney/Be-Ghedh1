@@ -182,6 +182,7 @@ module.exports={
         res.render('user/emailselect')
     },
     postOtplogin:async function(req, res){
+        console.log("inside");
         if(await userhelpers.isUser(req.body.email)){
             console.log(userhelpers.isUser(req.body.email))
             userhelpers.sendOTP(req.body.email)
@@ -478,6 +479,7 @@ module.exports={
     },
 
     postForgotPassword: async function(req, res) {
+        console.log("inside");
         if(await userhelpers.isUser(req.body.email)){
             await userhelpers.sendOTP(req.body.email)
             console.log("ppp")
