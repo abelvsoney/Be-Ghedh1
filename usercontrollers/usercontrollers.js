@@ -151,7 +151,7 @@ module.exports={
         }
         producthelpers.getProductById(req.query.id).then((response) => {
             let product = response;
-            console.log(product);
+            // console.log(product);
             if(product.price > product.offerprice) {
                 product.offer = true;
             }
@@ -244,12 +244,17 @@ module.exports={
     getAddtoCart: function(req, res) {
         console.log("in cart");
         let token = req.cookies.token;
-        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        if(token) {
+            let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         carthelpers.addToCart(user._id, req.params.id).then((response) => {
             console.log(response);
             // res.redirect('/viewcart')
             res.json({status:true})
         })
+        } else {
+            res.json({status:false})
+        }
+        
     },
 
     getViewCart:async function(req, res) {
@@ -400,11 +405,17 @@ module.exports={
     getAddToWishlist: function(req, res) {
         console.log("jjjj");
         let token = req.cookies.token;
-        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        if(token) {
+            let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         console.log(req.params.proId)
         wishlisthelpers.addToWishlist(req.params.proId, user._id).then((response) => {
-            res.json({status:response})
+            console.log("hii");
+            res.json({status:true})
         })
+        } else {
+            res.json({status:false})
+        }
+        
     },
 
     getRemovefromWishlist: function(req, res) {

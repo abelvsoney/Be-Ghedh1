@@ -5,7 +5,34 @@ const { ObjectId } = require('mongodb');
 module.exports = {
     addToWishlist: function(productId, userId) {
         return new Promise (async function(resolve, reject) {
-            if(userId.length < 1) {
+            if(userId) {
+                let proObj = {
+                    item : ObjectId(productId),
+                }
+                let userCart = await db.get().collection(collections.WISHLIST_COLLECTION).findOne({userId: ObjectId(userId)})
+                if(userCart) {
+                    let proExist = userCart.products.findIndex(product => product.item == productId);
+                    console.log(proExist)
+                    if(proExist != -1){
+                        resolve(false)
+                    } else {
+                        db.get().collection(collections.WISHLIST_COLLECTION).updateOne({ userId: ObjectId(userId) }, {
+                            $push: { products: proObj }
+                        }).then((response) => {
+                            resolve(true)
+                        })
+                    }
+                    
+                } else {
+                    let cartObj = {
+                        userId: ObjectId(userId),
+                        products: [proObj]
+                    }
+                    db.get().collection(collections.WISHLIST_COLLECTION).insertOne(cartObj).then((response) => {
+                        resolve(true);
+                    })
+                }
+            } else {
                 resolve(false)
             }
             let proObj = {
@@ -21,7 +48,7 @@ module.exports = {
                     db.get().collection(collections.WISHLIST_COLLECTION).updateOne({ userId: ObjectId(userId) }, {
                         $push: { products: proObj }
                     }).then((response) => {
-                        resolve(response)
+                        resolve(true)
                     })
                 }
                 
@@ -31,7 +58,7 @@ module.exports = {
                     products: [proObj]
                 }
                 db.get().collection(collections.WISHLIST_COLLECTION).insertOne(cartObj).then((response) => {
-                    resolve(response);
+                    resolve(true);
                 })
             }
         })

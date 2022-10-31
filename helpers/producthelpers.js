@@ -197,7 +197,7 @@ module.exports ={
     getAllUniqueProducts: function(){
         return new Promise(async function(resolve, reject){
             db.get().collection(collections.PRODUCT_COLLECTION).find({blocked: false}).toArray().then((res) => {
-                console.log(res);
+                // console.log(res);
                 res.forEach((element, i, a) => {
                     res.forEach((item, index, arr) => {
                         if(item.commonId == element.commonId && index != i) {
