@@ -560,8 +560,11 @@ module.exports={
 
     getFilterByBrand:async function(req, res) {
         let token = req.cookies.token;
-        let user = jwt.verify(token, process.env.USER_SECRET_KEY)
-        let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
+        if(token) {
+            let user = jwt.verify(token, process.env.USER_SECRET_KEY)
+            let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
+        }
+
         let brands = await brandhelpers.getAllBrands()
         let currentbrand = req.query.bname;
         console.log(brands);
@@ -584,7 +587,10 @@ module.exports={
 
     getFilterByCategory: async function(req, res) {
         let token = req.cookies.token;
-        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        if(token) {
+            let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        }
+
         let brands = await brandhelpers.getAllBrands()
         
         
