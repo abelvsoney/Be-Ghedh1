@@ -18757,12 +18757,14 @@ iframe {
 						</span>
 					</div>
 
-					<div class="text-center pt-2">
+					<div class="text-center pt-2" id="resendotp" hidden>
 						<a class="txt2" href="/resendotp?email={{email}}">
 							Resend OTP
 							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
 						</a>
 					</div>
+					<div id="some_div"></div>
+
 					
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn" type="submit">
@@ -18776,7 +18778,27 @@ iframe {
 	
 	
 
+	<script>
+		var timeLeft = 30;
+var elem = document.getElementById('some_div');
+var timerId = setInterval(countdown, 1000);
+
+function countdown() {
+    if (timeLeft == -1) {
+        clearTimeout(timerId);
+        doSomething();
+    } else {
+        elem.innerHTML = timeLeft + ' seconds remaining';
+        timeLeft--;
+    }
+}
+
+function doSomething() {
+	document.getElementById("some_div").hidden = true
 	
+    document.getElementById("resendotp").hidden = false
+}
+	</script>
 <!--===============================================================================================-->	
 	<script>
 		/*! jQuery v3.2.1 | (c) JS Foundation and other contributors | jquery.org/license */
