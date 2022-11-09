@@ -345,24 +345,30 @@ module.exports={
         offertotal = total - offertotal;
         let subtotal = total - (offertotal + coupDisc)
         console.log(subtotal);
-        orderhelpers.placeOrder(user._id, req.body, products, subtotal, total, offertotal, coupDisc).then((response) => {
-            if(req.body.paymentmethod == 'COD'){
-                res.json({status: true})
-            } else if (req.body.paymentmethod == 'RazorPay'){
-                orderhelpers.generateRazorPay(response.insertedId, subtotal).then((orderresponse) => {
-                    console.log("orderresponse", orderresponse);
-                    res.json(orderresponse)
-                })
-            } else {
-                console.log("inside paypal");
-                orderhelpers.changePaymentStatus(response.insertedId).then((resp) => {
-                    res.json("paypal")
-                })
-            }
-            
-        })
-        console.log(products);
-        console.log(req.body);
+        let address = await addresshelpers.getAddressbyId(req.body.addressId)
+        req.body.addressId = address
+        console.log("address\n",address,"\n address");
+        if(products.length > 0) {
+            orderhelpers.placeOrder(user._id, req.body, products, subtotal, total, offertotal, coupDisc).then((response) => {
+                if(req.body.paymentmethod == 'COD'){
+                    res.json({status: true})
+                } else if (req.body.paymentmethod == 'RazorPay'){
+                    orderhelpers.generateRazorPay(response.insertedId, subtotal).then((orderresponse) => {
+                        console.log("orderresponse", orderresponse);
+                        res.json(orderresponse)
+                    })
+                } else {
+                    console.log("inside paypal");
+                    orderhelpers.changePaymentStatus(response.insertedId).then((resp) => {
+                        res.json("paypal")
+                    })
+                }
+                
+            })
+        } else {
+            res.send("error")
+        }
+        
     },
 
     getOrderSuccessful: function(req, res) {
@@ -373,6 +379,7 @@ module.exports={
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         orderhelpers.getAllOrdersbyUserId(user._id).then((response, orderIds) => {
+            // console.log(response);
             console.log(response);
             response.forEach(order => {
                 if(order.status == "Cancelled") {

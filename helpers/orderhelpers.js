@@ -92,7 +92,7 @@ module.exports = {
                 }
             ]).toArray()
             orders.reverse();
-
+            console.log(orders);
             let orderIds = await db.get().collection(collections.ORDER_COLLECTION).find({userId: ObjectId(userId)}).project({_id:1}).toArray()
             // console.log("\n",orderIds,"\n");
             // console.log(orders)
@@ -176,6 +176,51 @@ module.exports = {
             }
             ).then((response) => {
                 resolve(response)
+            })
+        })
+    },
+    getOrderDetailsByOrderId:async function(orderId) {
+        return new Promise (async function (resolve, reject) {
+            let orders = await db.get().collection(collections.ORDER_COLLECTION).aggregate([
+                {
+                    $match:{_id: ObjectId(orderId)}
+                },
+                {
+                    $unwind:'$products'
+                },
+                {
+                    $project:{
+                        item:'$products.item',
+                        quantity:'$products.quantity'
+                    }
+                },
+                {
+                    $lookup:{
+                        from:collections.PRODUCT_COLLECTION,
+                        localField: 'item',
+                        foreignField:'_id',
+                        as: 'product'
+                    }
+                },
+                {
+                    $project:{
+                        item:1,
+                        quantity:1,
+                        product: {$arrayElemAt:['$product',0]}
+                    }
+                }
+            ]).toArray()
+            // orders.reverse();
+            // console.log(orders);
+
+            resolve(orders)
+        })
+    },
+
+    getOrderDetails: function(orderId) {
+        return new Promise (async function(resolve, reject) {
+            db.get().collection(collections.ORDER_COLLECTION).findOne({_id: ObjectId(orderId)}).then((res) => {
+                resolve(res)
             })
         })
     }

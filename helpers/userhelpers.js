@@ -1,5 +1,6 @@
 var db = require('../database/connection');
 var collections = require('../database/collections');
+var collection = require('../database/collections');
 const bcrypt = require('bcrypt');
 const { response } = require('express');
 const { ObjectId } = require('mongodb');
@@ -255,5 +256,40 @@ module.exports={
             }
             
         })
-    }
+    },
+
+    getAllUserOrders: () => {
+        return new Promise(async (resolve, reject) => {
+          let userPro = await db
+            .get()
+            .collection(collection.ORDER_COLLECTION)
+            .find()
+            .sort({ date: -1 })
+            .toArray();
+          console.log(userPro);
+          resolve(userPro);
+        });
+      },
+      getAllDeliveredOrder: () => {
+        return new Promise(async (resolve, reject) => {
+          let report = await db
+            .get()
+            .collection(collection.ORDER_COLLECTION)
+            .find({ status: "Delivered" })
+            .toArray();
+          console.log("repo", report);
+          resolve(report);
+        });
+      },
+      getAllUsers: () => {
+        return new Promise(async (resolve, reject) => {
+          let users = await db
+            .get()
+            .collection(collection.USER_COLLECTION)
+            .find()
+            .toArray();
+          // console.log(users +'\n helo')
+          resolve(users);
+        });
+      }
 }

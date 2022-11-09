@@ -412,5 +412,14 @@ module.exports = {
                 order.date = [year, month, day].join('-');
         });
         res.render('admin/salesreport',{admin: true, salesreport: true, order})
+    },
+
+    getViewOrderDetails: async function(req, res) {
+        let orderDetails = await orderhelpers.getOrderDetails(req.query.id);
+        console.log(orderDetails);
+        orderhelpers.getOrderDetailsByOrderId(req.query.id).then((products) => {
+            console.log(products);
+            res.render('admin/vieworderdetails', {admin: true, orderDetails, products})
+        })
     }
 }

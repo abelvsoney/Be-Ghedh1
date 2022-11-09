@@ -4,11 +4,14 @@ var admincontrollers = require('../admincontrollers/admincontrollers')
 var adminauthentication = require('../adminauthentication/authentication')
 const fileupload = require('express-fileupload');
 const usercontrollers = require('../usercontrollers/usercontrollers');
+
+var db = require('../database/connection');
+var collection = require('../database/collections');
+const chartHelper = require('../helpers/charthelpers');
+const userHelper = require('../helpers/userhelpers');
 router.use(fileupload())
 
-
 // const multer = require('multer')
-
 
 
 // const storage = multer.diskStorage({
@@ -24,7 +27,7 @@ router.use(fileupload())
 
 
 //login and logout
-router.get('/', adminauthentication.adminJWTTokenAuth, admincontrollers.getDasboard);
+// router.get('/', adminauthentication.adminJWTTokenAuth, admincontrollers.getDasboard);
 
 router.get('/login', adminauthentication.adminLoggedIn, admincontrollers.getLogin);
 
@@ -127,6 +130,103 @@ router.post('/test', function(req, res) {
             console.log(err)
         }
     })
-})
+});
+
+router.get('/vieworderdetails', admincontrollers.getViewOrderDetails)
+
+router.get('/', async function (req, res, next) {
+    console.log("in dashboard");
+    try {
+      let total = 0
+      let newDate = []
+      no= 0
+      let u_no =0
+      let order =0
+      let report = await userHelper.getAllDeliveredOrder()
+    
+      console.log("llll");
+      order_count= await db.get().collection(collection.ORDER_COLLECTION).find().count()
+      console.log("order:",order);
+      
+      await userHelper.getAllUserOrders().then((orders)=>{
+        
+        // console.log("in try: ",orders);
+         orders.forEach(data => {
+       
+     
+          if (data.status == "Delivered") {
+            no++
+            total=total+data.totalAmount
+            console.log(total);
+          }
+         });
+         console.log("llll");
+        
+       }).catch((err)=>{res.redirect('/error')})
+     await  userHelper.getAllUsers().then((users)=>{
+      users.reverse()
+      let newUsers = []
+      let newTrans = []
+      for (let index = 0; index < 5; index++) {
+        newUsers.push(users[index])
+        
+      }
+      users = newUsers
+        userHelper.getAllUserOrders().then(async(orders) => {
+          for (let index = 0; index < 3; index++) {
+            newTrans.push(orders[index])
+            
+          }
+          orders = newTrans
+          try {
+            console.log("llll");
+            console.log("order: ",orders);
+          } catch (err) {
+            console.log("err: 2nd try ",err)
+            res.redirect('/error')
+          }
+          await userHelper.getAllUsers().then((users)=>{users.forEach(data => {
+       
+            u_no++
+               
+            });
+          })       
+           res.render('admin/dashboard2',{admin:true,total,users,orders,no,u_no,report,order_count});
+            
+      });
+   
+        
+      })
+     
+   
+      
+    } catch (err) {
+      console.log(err);
+      res.redirect('/error')
+    }
+  })
+  
+  router.get('/dashboard/day', async (req,res)=>{
+    await chartHelper.findOrdersByDay().then((data)=>{
+      res.json(data)
+    })
+  })
+  router.get('/dashboard/week',async (req,res)=>{
+    await chartHelper.findOrderByMonth().then((data)=>{
+      res.json(data)
+    })
+  })
+  router.get('/dashboard/month',async (req,res)=>{
+    await chartHelper.findOrderByYear().then((data)=>{
+      console.log("hy:",data);
+      res.json(data)
+    })
+  })
+  router.get('/dashboard/category',async (req,res)=>{
+    await chartHelper.categoryStatus().then((data)=>{
+      // console.log(data);
+      res.json(data)
+    })
+  })
 
 module.exports = router;

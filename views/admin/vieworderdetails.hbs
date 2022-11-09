@@ -1,0 +1,171 @@
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+
+<section>
+
+    <center class="p-5"><a href="#"><button class="btn btn-success" hidden></button></a></center>
+    
+    <div class="container">
+        <table class="table mt-5" id="example">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity Purchased</th>
+                    <th scope="col">View Product</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each products}}
+                <tr>
+                    <td>{{this.product.product_name}}</td>
+                    <td>{{this.product.price}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td><a class="btn btn-primary" href="/viewproduct?id={{this.product._id}}">View Product</a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        
+
+        
+
+        <div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Address</h5>
+                <b>
+                    <p class="card-text">{{orderDetails.addressId.firstname}} {{orderDetails.addressId.secondname}}</p>
+                </b>
+                <p class="card-text" style="inline-size: 133px; overflow-wrap:break-word;">{{orderDetails.addressId.address}},</p>
+                <p class="card-text">{{orderDetails.addressId.city}}, {{orderDetails.addressId.state}}</p>
+                <p class="card-text">{{orderDetails.addressId.pincode}}</p>
+                <p class="card-text">Ph No: {{orderDetails.addressId.number}}</p>
+            </div>
+        </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Cart Totals</h5>
+                <b>
+                    <p class="card-text">Total : {{orderDetails.orgPrice}}</p>
+                </b>
+                <p class="card-text" style="inline-size: 133px; overflow-wrap:break-word;">Offer : - {{orderDetails.offertotal}}</p>
+                <p class="card-text">Coupon : - {{orderDetails.coupDisc}}</p>
+                <p class="card-text">Subtotal : {{orderDetails.totalAmount}}</p>
+            </div>
+        </div>
+  </div>
+</div>
+
+    </div>
+</section>
+
+
+
+
+<script>
+    $(document).ready(function () {
+    // Setup - add a text input to each footer cell
+    $('#example tfoot th').each(function () {
+        var title = $(this).text();
+        $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+    });
+ 
+    // DataTable
+    var table = $('#example').DataTable({
+
+        initComplete: function () {
+            // Apply the search
+            this.api()
+                .columns()
+                .every(function () {
+                    var that = this;
+ 
+                    $('input', this.footer()).on('keyup change clear', function () {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+        },
+    });
+});
+</script>
+
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+
