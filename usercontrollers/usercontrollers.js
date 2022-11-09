@@ -78,7 +78,8 @@ module.exports={
     postLogin:function(req, res){
         userhelpers.doLogin(req.body).then((response) => {
             if(! response){
-                res.send("failed")
+                res.cookie('blocked', "Invalid Credentials")
+                res.redirect('/login')
             } else {
                 if(response.blocked){
                     res.clearCookie('token')
