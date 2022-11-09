@@ -52,51 +52,9 @@ module.exports = {
 
     getAllOrdersbyUserId: async function(userId) {
         return new Promise (async function(resolve, reject) {
-            let orders = await db.get().collection(collections.ORDER_COLLECTION).aggregate([
-                {
-                    $match:{userId: ObjectId(userId)}
-                },
-                {
-                    $unwind:'$products'
-                },
-                {
-                    $project:{
-                        item:'$products.item',
-                        quantity:'$products.quantity',
-                        totalAmount:1,
-                        orgPrice:1,
-                        offertotal:1,
-                        coupDisc:1,
-                        status: 1
-                    }
-                },
-                {
-                    $lookup:{
-                        from:collections.PRODUCT_COLLECTION,
-                        localField: 'item',
-                        foreignField:'_id',
-                        as: 'product'
-                    }
-                },
-                {
-                    $project:{
-                        totalAmount:1,
-                        orgPrice:1,
-                        offertotal:1,
-                        coupDisc:1,
-                        status: 1,
-                        item:1,
-                        quantity:1,
-                        product: {$arrayElemAt:['$product',0]}
-                    }
-                }
-            ]).toArray()
-            orders.reverse();
-            console.log(orders);
-            let orderIds = await db.get().collection(collections.ORDER_COLLECTION).find({userId: ObjectId(userId)}).project({_id:1}).toArray()
-            // console.log("\n",orderIds,"\n");
-            // console.log(orders)
-            resolve(orders, orderIds)
+            db.get().collection(collections.ORDER_COLLECTION).find({userId: ObjectId(userId)}).toArray().then((response) => {
+                resolve(response)
+            })
         })
     },
 

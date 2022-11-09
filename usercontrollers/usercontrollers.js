@@ -378,10 +378,21 @@ module.exports={
     getVIewOrders: function(req, res) {
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
-        orderhelpers.getAllOrdersbyUserId(user._id).then((response, orderIds) => {
+        orderhelpers.getAllOrdersbyUserId(user._id).then((response) => {
             // console.log(response);
             console.log(response);
             response.forEach(order => {
+                var d = new Date(order.date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                order.date = [year, month, day].join('-');
                 if(order.status == "Cancelled") {
                     order.cancelled = true
                 } else if(order.status == "Delivered"){
@@ -390,6 +401,7 @@ module.exports={
                     order.returned = true;
                 }
             });
+            response.reverse();
             res.render('user/vieworders',{user:req.cookies.token, orders: response})
         })
     },
@@ -628,5 +640,14 @@ module.exports={
         })
 
         
+    },
+
+    getViewOrderDetails: async function(req, res) {
+        let orderDetails = await orderhelpers.getOrderDetails(req.query.id);
+        console.log(orderDetails);
+        orderhelpers.getOrderDetailsByOrderId(req.query.id).then((products) => {
+            console.log(products);
+            res.render('user/orderdetails', {user: req.cookies.token, orderDetails, products})
+        })
     }
 }

@@ -129,6 +129,8 @@ router.get('/filterbybrand', usercontrollers.getFilterByBrand)
 
 router.get('/filterbycategory', usercontrollers.getFilterByCategory);
 
+router.get('/vieworderdetails', usercontrollers.getViewOrderDetails)
+
 // router.get('/')
 
 module.exports = router;
