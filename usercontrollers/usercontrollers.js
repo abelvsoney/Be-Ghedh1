@@ -10,6 +10,8 @@ const bannerhelpers = require('../helpers/bannerhelpers')
 const couponhelpers = require('../helpers/couponhelpers')
 const brandhelpers =  require('../helpers/brandhelpers')
 const categoryhelpers = require('../helpers/categoryhelpers')
+var easyinvoice = require('easyinvoice');
+const wallethelpers = require('../helpers/wallethelpers')
 require('dotenv').config()
 
 // function getUserDetails (req, res){
@@ -55,9 +57,28 @@ module.exports={
         if(token) {
             let user = jwt.verify(token, process.env.USER_SECRET_KEY)
             let wishlist =await wishlisthelpers.getProductsfromWishlist(user._id);
-        }
-        
-        let brands = await brandhelpers.getAllBrands()
+            // console.log("wishlist\n",wishlist,"\n wishlist");
+            let brands = await brandhelpers.getAllBrands()
+            if(wishlist) {
+                producthelpers.getAllUniqueProducts().then((response) => {
+                    let products = response;
+                    products.forEach(element => {
+                        wishlist.forEach(wish => {
+                            // console.log(wish.product._id.toString() == element._id.toString());
+                            if(wish.product._id.toString() == element._id.toString()) {
+                                // console.log("inside");
+                                element.wishlisted = true;
+                            }
+                        });
+                        if (element.price > element.offerprice) {
+                            element.offer = true
+                        }
+                    });
+                    console.log("asdd\n",products,"\n dfgh");
+                    res.render('050 cozastore-master/product', { user: req.cookies.token, products, brands, shop: true })
+                })
+            } else {
+                let brands = await brandhelpers.getAllBrands()
         producthelpers.getAllUniqueProducts().then((response) => {
             let products = response;
             products.forEach(element => {
@@ -67,7 +88,19 @@ module.exports={
             });
             res.render('050 cozastore-master/product',{user: req.cookies.token, products, brands, shop: true})
         })
-        
+            }
+        } else {
+            let brands = await brandhelpers.getAllBrands()
+        producthelpers.getAllUniqueProducts().then((response) => {
+            let products = response;
+            products.forEach(element => {
+                if(element.price > element.offerprice){
+                    element.offer = true
+                }
+            });
+            res.render('050 cozastore-master/product',{user: req.cookies.token, products, brands, shop: true})
+        })
+        }
     },
 
     getLogin:function(req, res){
@@ -293,13 +326,20 @@ module.exports={
         })
     },
 
-    postChangeProductQuantity: function(req, res) {
+    postChangeProductQuantity:async function(req, res) {
         let token = req.cookies.token;
         let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         console.log(req.body);
-        carthelpers.changeQuantity(req.body, user._id).then((response) => {
+        carthelpers.changeQuantity(req.body, user._id).then(async (response) => {
+            let offertotal =await carthelpers.getTotalOfferAmount(user._id)
+            let coupDisc = await carthelpers.getCouponDiscount(user._id, offertotal)
             carthelpers.getTotalAmount(user._id).then((total) => {
-                response.total = total;
+                offertotal = total - offertotal;
+                let subtotal = total - (offertotal + coupDisc)
+                response.total = parseInt(total);
+                response.subtotal = subtotal;
+                response.offertotal = offertotal;
+                response.coupDisc = coupDisc;
                 res.json(response)
             })
         })
@@ -313,6 +353,8 @@ module.exports={
         let addresses = await addresshelpers.getAllAddressbyUserId(user._id);
         let products = await carthelpers.getCartbyUserId(user._id);
         let coupon_codeapplied = await carthelpers.isCoupon_Applied(user._id)
+        let wallet = await wallethelpers.getUserWallet(user._id);
+        let wallet_success
         console.log(products,"\nproducts")
         if(products) {
             products.forEach(element => {
@@ -325,7 +367,12 @@ module.exports={
         carthelpers.getTotalAmount(user._id).then((total) => {
             offertotal = total - offertotal;
             let subtotal = total - (offertotal + coupDisc)
-            res.render('user/checkout',{user: req.cookies.token, total, products, addresses, coupon_codeapplied, offertotal, coupDisc, subtotal})
+            if(subtotal <= wallet.amount) {
+                wallet_success = true;
+            } else {
+                wallet_success = false;
+            }
+            res.render('user/checkout',{user: req.cookies.token, total, products, addresses, coupon_codeapplied, offertotal, coupDisc, subtotal, wallet_success})
         })
         } else {
             res.redirect('/viewcart')
@@ -357,6 +404,10 @@ module.exports={
                     orderhelpers.generateRazorPay(response.insertedId, subtotal).then((orderresponse) => {
                         console.log("orderresponse", orderresponse);
                         res.json(orderresponse)
+                    })
+                } else if (req.body.paymentmethod == "Wallet") {
+                    wallethelpers.debitWallet(user._id, response.insertedId, subtotal).then((r) => {
+                        res.json({status: true})
                     })
                 } else {
                     console.log("inside paypal");
@@ -431,7 +482,7 @@ module.exports={
         console.log(req.params.proId)
         wishlisthelpers.addToWishlist(req.params.proId, user._id).then((response) => {
             console.log("hii");
-            res.json({status:true})
+            res.json(response)
         })
         } else {
             res.json({status:false})
@@ -577,8 +628,10 @@ module.exports={
     },
 
     changeOrderStatus: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
         console.log((req.query.status));
-        orderhelpers.changeOrderStatus(req.query.id, req.query.status).then(() => {
+        orderhelpers.changeOrderStatus(user._id, req.query.id, req.query.status).then(() => {
             res.redirect('/vieworders')
         })
     },
@@ -649,6 +702,36 @@ module.exports={
         orderhelpers.getOrderDetailsByOrderId(req.query.id).then((products) => {
             console.log(products);
             res.render('user/orderdetails', {user: req.cookies.token, orderDetails, products})
+        })
+    },
+    getMyWallet: function(req, res) {
+        let token = req.cookies.token;
+        let user = jwt.verify(token, process.env.USER_SECRET_KEY);
+        wallethelpers.getUserWallet(user._id).then((response) => {
+            let transaction = response.transaction;
+            // console.log(res.transaction)
+            transaction.forEach(order => {
+                var d = new Date(order.date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                order.date = [year, month, day].join('-');
+            });
+            console.log(transaction);
+            res.render('user/mywallet', {user: req.cookies.token, transaction, response})
+        })
+    },
+
+    getViewCoupons: function(req, res) {
+        couponhelpers.getAllActiveCoupon().then((r) => {
+            console.log(r)
+            res.render('user/coupons', {user: req.cookies.token, coupons: r})
         })
     }
 }

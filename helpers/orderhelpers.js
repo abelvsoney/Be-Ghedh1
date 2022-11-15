@@ -4,6 +4,7 @@ const { ObjectId } = require('mongodb');
 const Razorpay = require('razorpay')
 const crypto = require('crypto');
 const { resolve } = require('path');
+const wallethelpers = require('./wallethelpers');
 var instance = new Razorpay({
     key_id: 'rzp_test_eARPjl54RYSf66',
     key_secret: 'SIMZKACgM0EuWajZoBbZURL7'
@@ -15,7 +16,7 @@ module.exports = {
         orgPrice = parseInt(orgPrice)
         console.log(order,"products", products, totalPrice);
         return new Promise(async function(resolve, reject) {
-            let status = order.paymentmethod === 'COD'?'placed':'pending'
+            let status = order.paymentmethod === 'COD'||'Wallet'?'placed':'pending'
             let orderObj = {
                 addressId : order.addressId,
                 userId: ObjectId(userId),
@@ -72,8 +73,15 @@ module.exports = {
                 $set:{
                     status:"Cancelled"
                 }
-            }).then((response) => {
-                resolve(response)
+            }).then(async(response) => {
+                let orderDetails = await db.get().collection(collections.ORDER_COLLECTION).findOne({_id: ObjectId(id)});
+                if(orderDetails.paymentmethod != "COD" && orderDetails.status != "pending") {
+                    wallethelpers.creditWallet(orderDetails.userId, orderDetails._id, orderDetails.totalAmount).then((r) => {
+                        resolve(r);
+                    })
+                } else {
+                    resolve(response)
+                }
             })
         })
     },
@@ -124,7 +132,7 @@ module.exports = {
         })
     },
 
-    changeOrderStatus: function(orderId, status) {
+    changeOrderStatus:async function(userId, orderId, status) {
         return new Promise (function (resolve, reject) {
             db.get().collection(collections.ORDER_COLLECTION).updateOne({_id: ObjectId(orderId)}, 
             {
@@ -132,8 +140,20 @@ module.exports = {
                     status: status
                 }
             }
-            ).then((response) => {
-                resolve(response)
+            ).then(async(response) => {
+                if(userId) {
+                    if(status == "Returned") {
+                        let orderDetails = await db.get().collection(collections.ORDER_COLLECTION).findOne({_id: ObjectId(orderId)})
+                        wallethelpers.creditWallet(userId, orderId, orderDetails.totalAmount).then((r) => {
+                            resolve(r)
+                        })
+                    } else {
+                        resolve(response)
+                    }
+                } else {
+                    resolve(response)
+                }
+                
             })
         })
     },

@@ -105,5 +105,23 @@ module.exports = {
         })
         })
         
+    },
+
+    getAllActiveCoupon: function() {
+        let currentDate = new Date()
+        let result = [];
+        return new Promise(function(resolve, reject) {
+            db.get().collection(collections.COUPON_COLLECTION).find().toArray().then((res) => {
+                // console.log(res);
+                let coupons = res;
+                coupons.forEach(element => {
+                    if(new Date(element.validfrom) <= currentDate && new Date(element.validtill) >= currentDate) {
+                        result.push(element)
+                    }
+                });
+                // console.log(result);
+                resolve(result)
+            })
+        })
     }
 }

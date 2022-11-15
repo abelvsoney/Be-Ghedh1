@@ -28,6 +28,7 @@
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
+<script src="https://cdn.jsdelivr.net/npm/easyinvoice/dist/easyinvoice.min.js"></script>
 </head>
 <body class="animsition">
 
@@ -56,8 +57,8 @@
 												<img src="ImageSite/{{this.product._id}}1.png" alt="IMG">
 										</div>
 									</td>
-									<td class="column-2">{{this.product.product_name}}</td>
-									<td class="column-3">$ {{this.product.offerprice}}</td>
+									<td class="column-2" id="pname">{{this.product.product_name}}</td>
+									<td class="column-3" id="pprice">$ {{this.product.offerprice}}</td>
 									<td class="column-5">
 										<div class="wrap-num-productnoborder flex-w m-l-auto m-r-0">
 											<div class="btn-num-product-down"></div>
@@ -65,7 +66,7 @@
 											{{!-- <input class="mtext-104 cl3 txt-center num-product" type="number"
 												name="num-product1" value={{this.quantity}}> --}}
 											<span class="mtext-104 cl3 pt-2 txt-center num-product-noborder"
-												id="{{this.product._id}}">{{this.quantity}}</span>
+												id="pquantity">{{this.quantity}}</span>
 
 											<div class="btn-num-product-down"></div>
 
@@ -92,6 +93,17 @@
                             <div class="size-209 p-t-1">
                                 <span class="mtext-10 cl2" id="carttotal">
                                     {{orderDetails._id}}
+                                </span>
+                            </div>
+                            <div class="size-208">
+                                <span class="mtext-101 cl2">
+                                    Status:
+                                </span>
+                            </div>
+                
+                            <div class="size-209 p-t-1">
+                                <span class="mtext-10 cl2" id="carttotal">
+                                    {{orderDetails.status}}
                                 </span>
                             </div>
                         </div>
@@ -183,12 +195,17 @@
                                 </span>
                             </div>
                         </div>
-                
+						<button class="btn btn-primary" onclick="downloadInvoice()" >
+							Download Invoice
+						</button>
                     </div>
                 </div>
 			</div>
 		</div>
 	</form>
+    <div id="orderDetails" hidden>
+        {{orderDetails}}
+    </div>
 
     
 		
@@ -202,47 +219,103 @@
 		</span>
 	</div>
 
-	
-{{!-- 
-<!--===============================================================================================-->	
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-	<script>
-		$(".js-select2").each(function(){
-			$(this).select2({
-				minimumResultsForSearch: 20,
-				dropdownParent: $(this).next('.dropDownSelect2')
-			});
-		})
-	</script>
-<!--===============================================================================================-->
-	<script src="vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-	<script>
-		$('.js-pscroll').each(function(){
-			$(this).css('position','relative');
-			$(this).css('overflow','hidden');
-			var ps = new PerfectScrollbar(this, {
-				wheelSpeed: 1,
-				scrollingThreshold: 1000,
-				wheelPropagation: false,
-			});
-
-			$(window).on('resize', function(){
-				ps.update();
-			})
-		});
-	</script>
-	
-<!--===============================================================================================-->
-	<script src="js/main.js"></script> --}}
+<script>
+	async function downloadInvoice() {
+        let d = document.getElementById("total").innerHTML
+		event.preventDefault();
+		console.log(d)
+		var data = {
+    // Customize enables you to provide your own templates
+    // Please review the documentation for instructions and examples
+    "customize": {
+        //  "template": fs.readFileSync('template.html', 'base64') // Must be base64 encoded html 
+    },
+    // Your own data
+    "sender": {
+        "company": "Be-Ghedh",
+        "address": "Lorem Ipsum",
+        "zip": "1234 AB",
+        "city": "Sampletown",
+        "country": "Samplecountry"
+    },
+    // Your recipient
+   // "client": {
+       // "company": "Client Corp",
+       // "address": "Clientstreet 456",
+       // "zip": "4567 CD",
+        //"city": "Clientcity",
+        //"country": "Clientcountry"
+        // "custom1": "custom value 1",
+        // "custom2": "custom value 2",
+        // "custom3": "custom value 3"
+   // },
+    "information": {
+        // Invoice number
+        //"number": "2021.0001",
+        // Invoice data
+        "date": "12-12-2021",
+        // Invoice due date
+        //"due-date": "31-12-2021"
+    },
+    // The products you would like to see on your invoice
+    // Total values are being calculated automatically
+    "products": [
+        {
+            "quantity": 2,
+            "description": "Product 1",
+            "tax-rate": 6,
+            "price": 33.87
+        },
+        {
+            "quantity": 4.1,
+            "description": "Product 2",
+            "tax-rate": 6,
+            "price": 12.34
+        },
+        {
+            "quantity": 4.5678,
+            "description": "Product 3",
+            "tax-rate": 21,
+            "price": 6324.453456
+        }
+    ],
+    // The message you would like to display on the bottom of your invoice
+    "bottom-notice": "Kindly pay your invoice within 15 days.",
+    // Settings to customize your invoice
+    "settings": {
+        "currency": "USD", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
+        // "locale": "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
+        // "tax-notation": "gst", // Defaults to 'vat'
+        // "margin-top": 25, // Defaults to '25'
+        // "margin-right": 25, // Defaults to '25'
+        // "margin-left": 25, // Defaults to '25'
+        // "margin-bottom": 25, // Defaults to '25'
+        // "format": "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
+        // "height": "1000px", // allowed units: mm, cm, in, px
+        // "width": "500px", // allowed units: mm, cm, in, px
+        // "orientation": "landscape", // portrait or landscape, defaults to portrait
+    },
+    // Translate your invoice to your preferred language
+    "translate": {
+        // "invoice": "FACTUUR",  // Default to 'INVOICE'
+        // "number": "Nummer", // Defaults to 'Number'
+        // "date": "Datum", // Default to 'Date'
+        // "due-date": "Verloopdatum", // Defaults to 'Due Date'
+        // "subtotal": "Subtotaal", // Defaults to 'Subtotal'
+        // "products": "Producten", // Defaults to 'Products'
+        // "quantity": "Aantal", // Default to 'Quantity'
+        // "price": "Prijs", // Defaults to 'Price'
+        // "product-total": "Totaal", // Defaults to 'Total'
+        // "total": "Totaal" // Defaults to 'Total'
+    },
+	};
+	await easyinvoice.createInvoice(data, async function (result) {
+        // The response will contain a base64 encoded PDF file
+        console.log('PDF base64 string: ', result.pdf);
+		await easyinvoice.download("invoice.pdf")
+	});
+	}
+</script>
 	
 <script>
 		function changeQuantity(cartId, proId, count) {

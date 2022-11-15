@@ -195,6 +195,7 @@ module.exports = {
 
         producthelpers.getProductById(req.query.id).then((response) => {
             categoryhelpers.getCategorybyBrand(response.brand_name).then((category) => {
+                // console.log(response);
                 res.render('admin/editproduct',{admin:req.cookies.admintoken, response, category})
             })
             
@@ -265,8 +266,16 @@ module.exports = {
     },
 
     postAddBanner: function(req, res) {
-        console.log(req.body);
+        // console.log(req.body);
+        let image1 = req.files?.image1
         bannerhelpers.addNewBanner(req.body).then((response) => {
+            if(response) {
+                console.log(response);
+                let id = response.insertedId.toString()
+                console.log(id);
+                image1.mv("./public/ImageSite/"+id+".png", (err, done) => {
+                })
+            }
             res.redirect('/admin/viewbanners')
         })
     },
@@ -313,7 +322,14 @@ module.exports = {
     },
 
     postEditBanner: function(req, res) {
+        let image1 = req.files?.image1
+        let id = req.query.id
         bannerhelpers.updateBanner(req.query.id, req.body).then((response) => {
+            if (image1) {
+                console.log("inside");
+                image1.mv("./public/ImageSite/" + id + ".png", (err, done) => {
+                })
+            }
             res.redirect('/admin/viewbanners')
         })
     },
@@ -332,7 +348,7 @@ module.exports = {
 
     getchangeOrderStatus: function(req, res) {
         console.log(req.query.status);
-        orderhelpers.changeOrderStatus(req.query.id, req.query.status).then(() => {
+        orderhelpers.changeOrderStatus(null, req.query.id, req.query.status).then(() => {
             // console.log("inside hrrrr");
             res.redirect('/admin/vieworders')
         })

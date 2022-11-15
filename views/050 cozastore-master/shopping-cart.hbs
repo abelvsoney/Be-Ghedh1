@@ -125,7 +125,7 @@
 
 							<div class="size-209 p-t-1">
 								<span>- </span>
-								<span class="mtext-110 cl2" id="total">
+								<span class="mtext-110 cl2" id="offertotal">
 									{{offertotal}}
 								</span>
 							</div>
@@ -137,7 +137,7 @@
 
 							<div class="size-209 p-t-1">
 								<span>- </span>
-								<span class="mtext-110 cl2" id="total">
+								<span class="mtext-110 cl2" id="coupDisc">
 									{{coupDisc}}
 								</span>
 							</div>
@@ -149,7 +149,7 @@
 
 							<div class="size-209 p-t-1">
 								<span>$ </span>
-								<span class="mtext-110 cl2" id="total">
+								<span class="mtext-110 cl2" id="subtotal">
 									{{subtotal}}
 								</span>
 							</div>
@@ -235,13 +235,17 @@
 				method:'post',
 				success:(response) => {
 					if(response.status) {
-						location.reload()
+						//location.reload()
 						document.getElementById(proId).innerHTML = quantity + count
 						document.getElementById("total").innerHTML = response.total
+						document.getElementById("subtotal").innerHTML = response.subtotal
+						document.getElementById("offertotal").innerHTML = response.offertotal
+						document.getElementById("coupDisc").innerHTML = response.coupDisc
 						
 					} else if (response.removeProduct) {
-						alert("Product removed from cart")
+						swal("Product Removed from Cart").then((value) => {
 						location.reload()
+						})
 					}
 				}
 			})

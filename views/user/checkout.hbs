@@ -229,7 +229,15 @@
 						<label class="radio">
 							<input class="radio" type="radio" id="paymentmethod" name="paymentmethod" onclick="toggle()" value="COD" placeholder="COD" required> COD
 						</label>
-						
+						{{#if wallet_success}}
+						<label class="radio">
+							<input class="radio" type="radio" id="paymentmethod" name="paymentmethod" onclick="toggle()" value="Wallet" placeholder="Wallet" required> Wallet
+						</label>
+						{{else}}
+						<label class="radio">
+							<input class="radio" type="radio" id="paymentmethod" name="paymentmethod" onclick="toggle()" disabled="yes" value="Wallet" placeholder="Wallet"> Wallet (Insufficient Balance)
+						</label>
+						{{/if}}
 						<label class="radio">
 						<input type="radio" id="paymentmethod" name="paymentmethod" value="RazorPay" onclick="toggle()" placeholder="RazorPay" required> Razorpay
 						</label>

@@ -14,12 +14,19 @@ module.exports = {
                     let proExist = userCart.products.findIndex(product => product.item == productId);
                     console.log(proExist)
                     if(proExist != -1){
-                        resolve(false)
+                        db.get().collection(collections.WISHLIST_COLLECTION)
+                    .updateOne({userId: ObjectId(userId)},
+                    {
+                        $pull:{products:{item: ObjectId(productId)}}
+                    }
+                    ).then((resp) => {
+                        resolve({removed: true})
+                    })
                     } else {
                         db.get().collection(collections.WISHLIST_COLLECTION).updateOne({ userId: ObjectId(userId) }, {
                             $push: { products: proObj }
                         }).then((response) => {
-                            resolve(true)
+                            resolve({status:true})
                         })
                     }
                     
@@ -34,32 +41,6 @@ module.exports = {
                 }
             } else {
                 resolve(false)
-            }
-            let proObj = {
-                item : ObjectId(productId),
-            }
-            let userCart = await db.get().collection(collections.WISHLIST_COLLECTION).findOne({userId: ObjectId(userId)})
-            if(userCart) {
-                let proExist = userCart.products.findIndex(product => product.item == productId);
-                console.log(proExist)
-                if(proExist != -1){
-                    resolve(false)
-                } else {
-                    db.get().collection(collections.WISHLIST_COLLECTION).updateOne({ userId: ObjectId(userId) }, {
-                        $push: { products: proObj }
-                    }).then((response) => {
-                        resolve(true)
-                    })
-                }
-                
-            } else {
-                let cartObj = {
-                    userId: ObjectId(userId),
-                    products: [proObj]
-                }
-                db.get().collection(collections.WISHLIST_COLLECTION).insertOne(cartObj).then((response) => {
-                    resolve(true);
-                })
             }
         })
     },

@@ -129,7 +129,11 @@ router.get('/filterbybrand', usercontrollers.getFilterByBrand)
 
 router.get('/filterbycategory', usercontrollers.getFilterByCategory);
 
-router.get('/vieworderdetails', usercontrollers.getViewOrderDetails)
+router.get('/vieworderdetails', usercontrollers.getViewOrderDetails);
+
+router.get('/mywallet', usercontrollers.getMyWallet);
+
+router.get('/coupons', usercontrollers.getViewCoupons)
 
 // router.get('/')
 

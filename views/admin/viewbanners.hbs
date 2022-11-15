@@ -8,7 +8,7 @@
         <table class="table mt-5" id="myTable">
             <thead>
                 <tr>
-                    <th scope="col">Image</th>
+                    <th scope="col">No.</th>
                     <th scope="col">Title</th>
                     <th scope="col">Phrase</th>
                     <th scope="col">Link</th>
@@ -19,9 +19,7 @@
             <tbody>
                 {{#each banners}}
                 <tr>
-                    <td>
-                        {{this.banner_img}}
-                    </td>
+                    <td>{{inc @index}}</td>
                     <td>{{this.banner_title}}</td>
                     <td>{{this.banner_phrase}}</td>
                     <td>{{this.banner_route}}</td>
@@ -45,12 +43,12 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			</div>
 			<div class="modal-body">
-				<form action="/admin/addbanner" method="post">
-					<div class="form-group">
-						<i class="fa fa-plus-square-o"></i>
-						<input name="banner_img" id="banner_img" type="url" class="form-control" placeholder="Banner Image Link" required="required">
-					</div>
-                    <div class="form-group">
+				<form action="/admin/addbanner" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="">Banner Image</label>
+            <input type="file" name="image1" class="form-control" id="image1" required />
+          </div>
+          <div class="form-group">
 						<i class="fa fa-plus-square-o"></i>
 						<input name="banner_title" id="banner_title" type="text" class="form-control" placeholder="Banner Title" required="required">
 					</div>
@@ -142,4 +140,3 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 </style>
-

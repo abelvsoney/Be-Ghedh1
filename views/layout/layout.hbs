@@ -142,6 +142,35 @@
 
 		/*---------------------------------------------*/
 
+		$('.js-deletewish-b2').on('click', function(e){
+			e.preventDefault();
+		});
+
+		$('.js-deletewish-b2').each(function(){
+			var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
+			$(this).on('click', function(){
+				swal(nameProduct, "is deleted from wishlist !", "success");
+				$(this).addClass('js-deletedwish-b2');
+				$(this).off('click');
+				//$(this).removeClass('js-deletedwish-b2');
+				$(this).addClass('js-addwish-b2');
+				
+			});
+		});
+
+		$('.js-deletewish-detail').each(function(){
+			var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
+
+			$(this).on('click', function(){
+				swal(nameProduct, "is deleted from wishlist !", "success");
+
+				$(this).addClass('js-deletedwish-detail');
+				$(this).off('click');
+			});
+		});
+
+		/*---------------------------------------------*/
+
 		$('.js-addcart-detail').each(function(){
 			var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
 			$(this).on('click', function(){
@@ -178,8 +207,9 @@
 					count = parseInt(count) + 1
 					$("#cart-count").html(count)
 				} else {
-					alert("Sign In First")
+					swal("Sign In First").then((value) => {
 					location.href = "/login"
+					})
 				}
 			}
 		})
@@ -204,15 +234,23 @@
 
 <script>
     function addToWishlist(productId) {
+		let id = productId+'wishList'
+    	var btn = document.getElementById(id)
+		console.log(btn);
 		$.ajax({
 			url:'/addtowishlist/'+productId,
 			method:'get',
 			success: (response) => {
 				if(response.status ==  true) {
-
+					btn.classList.add('wish')
+					swal("Product Added to Wishlist");
+				} else if(response.removed) {
+					 btn.classList.remove('wish')
+					 swal("Product Removed from Wishlist")
 				} else {
-					alert("Sign In First")
+					swal("Sign In First").then((value) => {
 					location.href = "/login"
+					})
 				}
 			}
 		})

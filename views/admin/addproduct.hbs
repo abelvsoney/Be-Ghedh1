@@ -3,6 +3,11 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.css">
+<style>
+  .clr {
+    display: none;
+  }
+</style>
 
 <form class="form-horizontal p-5" action="/admin/addproductfinal" method="post" encType="multipart/form-data">
 
@@ -90,40 +95,30 @@
 
 
 <label for="">image</label><br />
-        <div id="crop">
-          <img id="imgView1" alt="" style="height: 100px; width: 120px" class="clr" />
+<div id="crop">
+  <img id="imgView1" alt="" style="height: 25%; width: 25%" class="clr" />
 
-          <div class="vald-info" id="info"></div>
-          <h5 class="error_form text-danger" id="image1_error_message"></h5>
-          <div style="display: flex">
-            <div id="image-box1" class="image-container clr" style="height: 300px; width: 20%"></div>
-            <button type="button" class="betaButton" id="crop-btn1" style="
-      margin-top: 10px;
-      display: none;
-      width: 50%;
-      margin: 20rem 0rem 0rem 0rem;
-    ">
-              Crop
-            </button>
-          </div>
-        </div>
+  <div class="vald-info" id="info"></div>
+  <h5 class="error_form text-danger" id="image1_error_message"></h5>
+  <div style="display: block">
+    <div id="image-box1" class="image-container clr" style="height: 300px; width: 20%"></div>
+    <button type="button" class="betaButton" id="crop-btn1" style="display: none;">
+      Crop
+    </button>
+  </div>
+</div>
+<input type="file" name="image1" class="form-control" onchange="changeImg(event)" id="image1" required /><br />
 
 
-        <input type="file" name="image1" class="form-control" onchange="changeImg(event)" id="image1" required /><br />
         <label for="">image 2</label><br />
         <div id="crop">
-          <img id="imgView2" alt="" style="height: 100px; width: 120px" class="clr" />
+          <img id="imgView2" alt="" style="height: 25%; width: 25%" class="clr" />
 
           <div class="vald-info" id="info"></div>
           <h5 class="error_form text-danger" id="image2_error_message"></h5>
-          <div style="display: flex">
+          <div style="display: block">
             <div id="image-box2" class="image-container clr" style="height: 300px; width: 20%"></div>
-            <button type="button" class="betaButton" id="crop-btn2" style="
-      margin-top: 10px;
-      display: none;
-      width: 50%;
-      margin: 20rem 0rem 0rem 0rem;
-    ">
+            <button type="button" class="betaButton" id="crop-btn2" style="display: none;">
               Crop
             </button>
           </div>
@@ -133,18 +128,13 @@
         <input type="file" name="image2" class="form-control" onchange="changeImg2(event)" id="image2" required /><br />
         <label for="">image 3</label><br />
         <div id="crop">
-          <img id="imgView3" alt="" style="height: 100px; width: 120px" class="clr" />
+          <img id="imgView3" alt="" style="height: 25%; width: 25%" class="clr" />
 
           <div class="vald-info" id="info"></div>
           <h5 class="error_form text-danger" id="image3_error_message"></h5>
-          <div style="display: flex">
+          <div style="display: block">
             <div id="image-box3" class="image-container clr" style="height: 300px; width: 20%"></div>
-            <button type="button" class="betaButton" id="crop-btn3" style="
-      margin-top: 10px;
-      display: none;
-      width: 50%;
-      margin: 20rem 0rem 0rem 0rem;
-    ">
+            <button type="button" class="betaButton" id="crop-btn3" style="display: none;">
               Crop
             </button>
           </div>

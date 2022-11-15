@@ -1,9 +1,14 @@
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.css">
 <!------ Include the above in your HEAD tag ---------->
-
-<form class="form-horizontal p-5" action="/admin/editbanner?id={{response._id}}" method="post">
+<style>
+  .clr {
+    display: none;
+  }
+</style>
+<form class="form-horizontal p-5" action="/admin/editbanner?id={{response._id}}" method="post" enctype="multipart/form-data">
 <fieldset>
 
 <center class="p-5"><h3 style="text-decoration: underline;">Edit Banner</h3></center>
@@ -13,12 +18,23 @@
 
 
 <!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="banner_img">Banner Image</label>  
-  <div class="col-md-4">
-  <input id="banner_img" name="banner_img" value="{{response.banner_img}}" placeholder="Banner Image" class="form-control input-md" required="" type="url">
+
+<label for="">image</label><br />
+{{!-- <img src="/ImageSite/{{response._id}}1.png" style="width:100px;height:auto" id="imgview"> --}}
+<br>
+<div id="crop">
+  <img src="/ImageSite/{{response._id}}.png" id="imgView1" alt="" style="height: 15%; width: 15%" class="" />
+  <div class="vald-info" id="info"></div>
+  <h5 class="error_form text-danger" id="image1_error_message"></h5>
+  <div style="display: block">
+    <div id="image-box1" class="image-container clr" style="height: 300px; width: 20%"></div>
+    <button type="button" class="betaButton" id="crop-btn1" style="display: none;">
+      Crop
+    </button>
   </div>
 </div>
+
+<input type="file" name="image1" class="form-control" onchange="changeImg(event)" id="image1" /><br />
 
 
 <div class="form-group">
@@ -60,3 +76,67 @@
 
 </fieldset>
 </form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.js"></script>
+<script>
+  function changeImg(event) {
+    //document.getElementById('imgview').src=URL.createObjectURL(event.target.files[0])
+    document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
+  }
+  const imagebox1 = document.getElementById("image-box1");
+  const crop_btn1 = document.getElementById("crop-btn1");
+  const input1 = document.getElementById("image1");
+  // When user uploads the image this event will get triggered
+  input1.addEventListener("change", () => {
+    // Getting image file object from the input variable
+    const img_data1 = input1.files[0];
+    // createObjectURL() static method creates a DOMString containing a URL representing the object given in the parameter.
+    // The new object URL represents the specified File object or Blob object.
+    const url1 = URL.createObjectURL(img_data1);
+    // Creating a image tag inside imagebox which will hold the cropping view image(uploaded file) to it using the url created before.
+    imagebox1.innerHTML = `<img src="${url1}" id="image1" style="width:100%;">`;
+    // Storing that cropping view image in a variable
+    const image1 = document.getElementById("image1");
+    // Displaying the image box
+    document.getElementById("image-box1").style.display = "block";
+    // Displaying the Crop buttton
+    document.getElementById("crop-btn1").style.display = "block";
+    // Hiding the Post button
+    document.getElementById("imgView1").style.display = "block";
+    const cropper1 = new Cropper(image1, {
+      autoCropArea: 1,
+      viewMode: 1,
+      scalable: false,
+      zoomable: false,
+      movable: false,
+      minCropBoxWidth: 50,
+      minCropBoxHeight: 50,
+    });
+    // When crop button is clicked this event will get triggered
+    crop_btn1.addEventListener("click", () => {
+      // This method coverts the selected cropped image on the cropper canvas into a blob object
+      cropper1.getCroppedCanvas().toBlob((blob) => {
+        // Gets the original image data
+        let fileInputElement1 = document.getElementById("image1");
+        // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+        let file1 = new File([blob], img_data1.name, {
+          type: "image/*",
+          lastModified: new Date().getTime(),
+        });
+        // Create a new container
+        let container1 = new DataTransfer();
+        // Add the cropped image file to the container
+        container1.items.add(file1);
+        // Replace the original image file with the new cropped image file
+        fileInputElement1.files = container1.files;
+        document.getElementById("imgView1").src = URL.createObjectURL(
+          fileInputElement1.files[0]
+        );
+        // Hide the cropper box
+        document.getElementById("image-box1").style.display = "none";
+        // Hide the crop button
+        document.getElementById("crop-btn1").style.display = "none";
+      });
+    });
+  });
+  
+</script>

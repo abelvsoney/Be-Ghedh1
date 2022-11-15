@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const { response } = require('express');
 const { ObjectId } = require('mongodb');
 const nodemailer = require('nodemailer');
+const wallethelpers = require('./wallethelpers');
 
 let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -33,7 +34,10 @@ module.exports={
                 userData.password = await bcrypt.hash(userData.password, 10);
                 userData.verified = false;
                 db.get().collection(collections.USER_COLLECTION).insertOne(userData).then((data) => {
-                    resolve(data)
+                    console.log(data);
+                    wallethelpers.createWallet(data.insertedId).then((res) => {
+                        resolve(data)
+                    })
                 })
             }
         })    
